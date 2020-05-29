@@ -40,17 +40,19 @@ class Visualization:
             Image array in OpenCV format
 
         """
+        n_people = len(pt_df. columns) // 3
         for index, row in pt_df.iterrows():
-            pos = (int(row['x']), int(row['y']))
+            for i in range(n_people):
+                pos = (int(row['x'+str(i)]), int(row['y'+str(i)]))
 
-            color = Visualization.MID_COLOR
-            if row.name.startswith('R'):
-                color = Visualization.R_COLOR
-            elif row.name.startswith('L'):
-                color = Visualization.L_COLOR
+                color = Visualization.MID_COLOR
+                if row.name.startswith('R'):
+                    color = Visualization.R_COLOR
+                elif row.name.startswith('L'):
+                    color = Visualization.L_COLOR
 
-            if pos[0] > 0 or pos[1] > 0:
-                img = cv2.circle(img, pos, 3, color, -1)
+                if pos[0] > 0 or pos[1] > 0:
+                    img = cv2.circle(img, pos, 3, color, -1)
 
     def draw_lines(img, pt_df):
         """Draws lines joining body parts on to the given image array.
@@ -69,22 +71,24 @@ class Visualization:
             Image array in OpenCV format
 
         """
-        for line in Visualization.LINE_PATHS:
-            pts = np.zeros(shape=(len(line), 2), dtype=np.int32)
-            count = 0
+        n_people = len(pt_df.columns) // 3
+        for i in range(n_people):
+            for line in Visualization.LINE_PATHS:
+                pts = np.zeros(shape=(len(line), 2), dtype=np.int32)
+                count = 0
 
-            for part in line:
-                row = pt_df.loc[part.value, 'x':'y']
-                pt = np.int32(row.values)
-                if pt[0] > 0 and pt[1] > 0:
-                    pts[count] = pt
-                    count += 1
+                for part in line:
+                    row = pt_df.loc[part.value, 'x'+str(i):'y'+str(i)]
+                    pt = np.int32(row.values)
+                    if pt[0] > 0 and pt[1] > 0:
+                        pts[count] = pt
+                        count += 1
 
-            # Filter out zero points, then reshape before drawing
-            pts = pts[pts > 0]
-            pts = pts.reshape((-1, 1, 2))
-            cv2.polylines(img, [pts], False, Visualization.LINE_COLOR,
-                          thickness=2)
+                # Filter out zero points, then reshape before drawing
+                pts = pts[pts > 0]
+                pts = pts.reshape((-1, 1, 2))
+                cv2.polylines(img, [pts], False, Visualization.LINE_COLOR,
+                              thickness=2)
 
     def create_video_from_dataframes(filename, body_keypoints_dfs, width, height):
         """Creates a video visualising the provided array of body keypoints.

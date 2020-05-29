@@ -56,15 +56,41 @@ class OpenPoseJsonParser:
             DataFrame containing the keypoints
 
         """
-        if person_index < self.get_person_count():
-            person_keypoints = self.all_data['people'][person_index]['pose_keypoints_2d']
-            np_keypoints = np.array(person_keypoints)
-            # Reshape to rows of x,y,confidence
-            np_v_reshape = np_keypoints.reshape(int(len(np_keypoints)/3), 3)
-            # Place in dataframe
-            body_keypoints_df = pd.DataFrame(np_v_reshape,
-                                             columns=self.COLUMN_NAMES,
-                                             index=self.ROW_NAMES)
-            return body_keypoints_df
-        else:
-            return None
+        return self.get_multiple_keypoints([person_index])
+
+    def get_multiple_keypoints(self, person_indices):
+        """Get the keypoints of a given person.
+
+        Parameters
+        ----------
+        person_indices : array of ints
+            Indices of people in file for which to get keypoints
+
+        Returns
+        -------
+        DataFrame
+            DataFrame containing the keypoints, labelled with e.g. x0, y0, confidence0, x1, y1, confidence1
+
+        """
+        column_names = []
+        body_keypoints_df = pd.DataFrame()
+
+        for i in range(len(person_indices)):
+            pi = person_indices[i]
+            if pi < self.get_person_count():
+                for c in self.COLUMN_NAMES:
+                    column_names.append(c + str(i))
+
+                person_keypoints = self.all_data['people'][pi]['pose_keypoints_2d']
+                np_keypoints = np.array(person_keypoints)
+                # Reshape to rows of x,y,confidence
+                np_v_reshape = np_keypoints.reshape(int(len(np_keypoints)/3), 3)
+                # Place in dataframe
+                body_keypoints_df = pd.concat([body_keypoints_df,
+                                               pd.DataFrame(np_v_reshape)],
+                                              axis=1)
+
+        body_keypoints_df.columns = column_names
+        body_keypoints_df.index = self.ROW_NAMES
+
+        return body_keypoints_df

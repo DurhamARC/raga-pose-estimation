@@ -28,7 +28,7 @@ body_keypoints_dfs = []
 # For now, just use the first peson in each video
 for file in json_files:
     parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
-    body_keypoints_df = parser.get_person_keypoints(0)
+    body_keypoints_df = parser.get_multiple_keypoints([0, 1])
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
 
