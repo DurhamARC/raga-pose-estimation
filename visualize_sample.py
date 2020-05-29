@@ -32,12 +32,5 @@ for file in json_files:
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
 
-# Draw the data from the DataFrame
-for df in body_keypoints_dfs[0:10]:
-    img = np.ones((height, width, 3), np.uint8)
-    Visualization.draw_lines(img, df)
-    Visualization.draw_points(img, df)
-    cv2.imshow('image', img)
-    cv2.waitKey(0)
-
-cv2.destroyAllWindows()
+Visualization.create_video_from_dataframes('output.mp4', body_keypoints_dfs,
+                                           width, height)

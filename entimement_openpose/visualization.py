@@ -85,3 +85,36 @@ class Visualization:
             pts = pts.reshape((-1, 1, 2))
             cv2.polylines(img, [pts], False, Visualization.LINE_COLOR,
                           thickness=2)
+
+    def create_video_from_dataframes(filename, body_keypoints_dfs, width, height):
+        """Creates a video visualising the provided array of body keypoints.
+
+        Parameters
+        ----------
+        filename : str
+            Path to output file (should be .mp4)
+        body_keypoints_dfs : array of DataFrames
+            Array of DataFrames as created by OpenPoseJsonParser
+        width : int
+            Width of output video
+        height : type
+            Height of output video
+
+        Returns
+        -------
+        None
+
+        """
+        # Draw the data from the DataFrame
+        img_array = []
+        for df in body_keypoints_dfs:
+            img = np.ones((height, width, 3), np.uint8)
+            Visualization.draw_lines(img, df)
+            Visualization.draw_points(img, df)
+            img_array.append(img)
+
+        out = cv2.VideoWriter(filename, cv2.VideoWriter_fourcc(*'mp4v'), 25,
+                              (width, height))
+        for i in range(len(img_array)):
+            out.write(img_array[i])
+        out.release()
