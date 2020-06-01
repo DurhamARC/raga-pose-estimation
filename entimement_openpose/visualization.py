@@ -1,3 +1,5 @@
+from sys import platform
+
 import cv2
 import numpy as np
 
@@ -165,8 +167,9 @@ class Visualization:
 
         for key, img_array in img_arrays.items():
             if len(img_array):
+                codec = 'avc1' if platform == 'darwin' else 'h264'
                 out = cv2.VideoWriter("%s_%s.mp4" % (file_basename, key),
-                                      cv2.VideoWriter_fourcc(*'avc1'), 25,
+                                      cv2.VideoWriter_fourcc(*codec), 25,
                                       (width, height))
                 for i in range(len(img_array)):
                     out.write(img_array[i])
