@@ -1,4 +1,3 @@
-import numpy as np
 import cv2
 import os
 
@@ -32,5 +31,7 @@ for file in json_files:
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
 
-Visualization.create_video_from_dataframes('output.mp4', body_keypoints_dfs,
-                                           width, height)
+Visualization.create_videos_from_dataframes('.', 'output', body_keypoints_dfs,
+                                            width, height, create_blank=True,
+                                            create_overlay=True,
+                                            video_to_overlay='example_files/short_video.mp4')

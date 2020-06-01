@@ -23,13 +23,13 @@ class Visualization:
         [OpenPoseParts.L_HIP, OpenPoseParts.MID_HIP, OpenPoseParts.R_HIP]
     ]
 
-    def draw_points(img, pt_df):
-        """Draws keypoints on to the given image array.
+    def draw_points(imgs, pt_df):
+        """Draws keypoints on to the given image arrays.
 
         Parameters
         ----------
-        img : np.array
-            Image array in OpenCV format
+        img : array of np.array
+            Array of image arrays in OpenCV format
 
         pt_df : DataFrame
             DataFrame containing keypoints
@@ -52,15 +52,17 @@ class Visualization:
                     color = Visualization.L_COLOR
 
                 if pos[0] > 0 or pos[1] > 0:
-                    img = cv2.circle(img, pos, 3, color, -1)
+                    for key, img in imgs.items():
+                        if img is not None:
+                            img = cv2.circle(img, pos, 3, color, -1)
 
-    def draw_lines(img, pt_df):
-        """Draws lines joining body parts on to the given image array.
+    def draw_lines(imgs, pt_df):
+        """Draws lines joining body parts on to the given image arrays.
 
         Parameters
         ----------
-        img : np.array
-            Image array in OpenCV format
+        imgs : array of np.array
+            Array of image arrays in OpenCV format
 
         pt_df : DataFrame
             DataFrame containing keypoints
@@ -87,38 +89,86 @@ class Visualization:
                 # Filter out zero points, then reshape before drawing
                 pts = pts[pts > 0]
                 pts = pts.reshape((-1, 1, 2))
-                cv2.polylines(img, [pts], False, Visualization.LINE_COLOR,
-                              thickness=2)
 
-    def create_video_from_dataframes(filename, body_keypoints_dfs, width, height):
+                for key, img in imgs.items():
+                    if img is not None:
+                        cv2.polylines(img, [pts], False,
+                                      Visualization.LINE_COLOR, thickness=2)
+
+    def create_videos_from_dataframes(directory, file_basename,
+                                      body_keypoints_dfs, width, height,
+                                      create_blank=True, create_overlay=False,
+                                      video_to_overlay=None):
         """Creates a video visualising the provided array of body keypoints.
 
         Parameters
         ----------
-        filename : str
-            Path to output file (should be .mp4)
+        directory : str
+            Path to output folder
+        file_basename : str
+            Base name of file. Will create files <file_basename>_blank.mp4
+            and/or <file_basename>_overlay.mp4
         body_keypoints_dfs : array of DataFrames
             Array of DataFrames as created by OpenPoseJsonParser
         width : int
             Width of output video
         height : type
             Height of output video
+        create_blank : bool
+            Whether to create a visualisation with an empty background
+            (default True)
+        create_overlay : bool
+            Whether to create a visualisation on top of an overlay
+            (default False)
+        video_to_overlay : str
+            Path to video to overlay. Must be provided if create_overlay is
+            True
 
         Returns
         -------
         None
 
         """
-        # Draw the data from the DataFrame
-        img_array = []
-        for df in body_keypoints_dfs:
-            img = np.ones((height, width, 3), np.uint8)
-            Visualization.draw_lines(img, df)
-            Visualization.draw_points(img, df)
-            img_array.append(img)
+        cap = None
+        if create_overlay:
+            try:
+                cap = cv2.VideoCapture(video_to_overlay)
+            except Exception as e:
+                raise Exception("Unable to open video from %s"
+                                % video_to_overlay) from e
 
-        out = cv2.VideoWriter(filename, cv2.VideoWriter_fourcc(*'mp4v'), 25,
-                              (width, height))
-        for i in range(len(img_array)):
-            out.write(img_array[i])
-        out.release()
+        # Draw the data from the DataFrame
+        img_arrays = {'blank': [], 'overlay': []}
+        for df in body_keypoints_dfs:
+            imgs = {'blank': None, 'overlay': None}
+
+            if create_blank:
+                imgs['blank'] = np.ones((height, width, 3), np.uint8)
+
+            if create_overlay:
+                if cap.isOpened():
+                    ret, frame = cap.read()
+                    imgs['overlay'] = frame
+                else:
+                    raise Exception("Not enough frames in overlay video to \
+                                     match data frame")
+
+            Visualization.draw_lines(imgs, df)
+            Visualization.draw_points(imgs, df)
+
+            for k, v in imgs.items():
+                if v is not None:
+                    img_arrays[k].append(v)
+
+        if create_overlay:
+            cap.release()
+
+        for key, img_array in img_arrays.items():
+            if len(img_array):
+                out = cv2.VideoWriter("%s_%s.mp4" % (file_basename, key),
+                                      cv2.VideoWriter_fourcc(*'mp4v'), 25,
+                                      (width, height))
+                for i in range(len(img_array)):
+                    out.write(img_array[i])
+
+                out.release()
