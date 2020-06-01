@@ -166,7 +166,7 @@ class Visualization:
         for key, img_array in img_arrays.items():
             if len(img_array):
                 out = cv2.VideoWriter("%s_%s.mp4" % (file_basename, key),
-                                      cv2.VideoWriter_fourcc(*'mp4v'), 25,
+                                      cv2.VideoWriter_fourcc(*'avc1'), 25,
                                       (width, height))
                 for i in range(len(img_array)):
                     out.write(img_array[i])
