@@ -167,9 +167,9 @@ class Visualization:
 
         for key, img_array in img_arrays.items():
             if len(img_array):
-                # codec = 'avc1' if platform == 'darwin' else 'X264'
-                # fourcc = cv2.VideoWriter_fourcc(*codec)
-                fourcc = -1
+                codec = 'avc1' if platform == 'darwin' else 'H264'
+                fourcc = cv2.VideoWriter_fourcc(*codec)
+                print(fourcc)
                 out = cv2.VideoWriter("%s_%s.mp4" % (file_basename, key),
                                       fourcc, 25,
                                       (width, height))
