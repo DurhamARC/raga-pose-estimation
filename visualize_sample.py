@@ -2,7 +2,8 @@ import cv2
 import os
 
 from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
-from entimement_openpose.visualization import Visualization
+from entimement_openpose.openpose_parts import OpenPosePartGroups
+from entimement_openpose.visualizer import Visualizer
 
 # Create a video from JSON point data
 
@@ -24,14 +25,21 @@ body_keypoints_dfs = []
 
 # Loop through all json files in output directory
 # Each file is a frame in the video
-# For now, just use the first peson in each video
 for file in json_files:
     parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
     body_keypoints_df = parser.get_multiple_keypoints([0, 1])
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
 
-Visualization.create_videos_from_dataframes('.', 'output', body_keypoints_dfs,
-                                            width, height, create_blank=True,
-                                            create_overlay=True,
-                                            video_to_overlay='example_files/short_video.mp4')
+
+visualizer = Visualizer(parts_to_display=OpenPosePartGroups.UPPER_BODY_PARTS,
+                        output_directory='output')
+visualizer.create_videos_from_dataframes(
+    'short_video',
+    body_keypoints_dfs,
+    width,
+    height,
+    create_blank=True,
+    create_overlay=True,
+    video_to_overlay='example_files/short_video.mp4'
+)

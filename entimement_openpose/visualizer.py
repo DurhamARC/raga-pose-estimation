@@ -6,7 +6,7 @@ import numpy as np
 from .openpose_parts import OpenPoseParts
 
 
-class Visualization:
+class Visualizer:
     """Class providing visualization of OpenPose data from a DataFrame"""
 
     MID_COLOR = (0, 0, 255)
@@ -22,10 +22,52 @@ class Visualization:
             OpenPoseParts.L_WRIST],
         [OpenPoseParts.NECK, OpenPoseParts.R_SHOULDER, OpenPoseParts.R_ELBOW,
             OpenPoseParts.R_WRIST],
-        [OpenPoseParts.L_HIP, OpenPoseParts.MID_HIP, OpenPoseParts.R_HIP]
+        [OpenPoseParts.L_HIP, OpenPoseParts.MID_HIP, OpenPoseParts.R_HIP],
+        [OpenPoseParts.L_HIP, OpenPoseParts.L_KNEE, OpenPoseParts.L_ANKLE,
+            OpenPoseParts.L_BIG_TOE],
+        [OpenPoseParts.R_HIP, OpenPoseParts.R_KNEE, OpenPoseParts.R_ANKLE,
+            OpenPoseParts.R_BIG_TOE],
+        [OpenPoseParts.L_ANKLE, OpenPoseParts.L_SMALL_TOE],
+        [OpenPoseParts.R_ANKLE, OpenPoseParts.R_SMALL_TOE]
     ]
 
-    def draw_points(imgs, pt_df):
+    def __init__(self, parts_to_display=None, output_directory=''):
+        """Initializes a Visualizer instance with a set of parts to display and
+        an output directory.
+
+        Parameters
+        ----------
+        parts_to_display : array of OpenPoseParts
+            Array of parts to display in output videos. Defaults to None,
+            which shows all parts.
+        output_directory : str
+            Path to video output folder. Directory will be created if it
+            doesn't exist.
+
+        Returns
+        -------
+        Visualizer instance
+
+        """
+        self.output_directory = output_directory
+        if not os.path.exists(self.output_directory):
+            os.mkdir(output_directory)
+
+        self.parts_to_display = parts_to_display or list(OpenPoseParts)
+
+        if parts_to_display is None:
+            self.paths = Visualizer.LINE_PATHS
+        else:
+            self.paths = []
+            for path in Visualizer.LINE_PATHS:
+                new_path = []
+                for part in path:
+                    if part in self.parts_to_display:
+                        new_path.append(part)
+                if new_path:
+                    self.paths.append(new_path)
+
+    def draw_points(self, imgs, pt_df):
         """Draws keypoints on to the given image arrays.
 
         Parameters
@@ -43,22 +85,23 @@ class Visualization:
 
         """
         n_people = len(pt_df. columns) // 3
-        for index, row in pt_df.iterrows():
+        filtered_df = pt_df.loc[[x.value for x in self.parts_to_display]]
+        for index, row in filtered_df.iterrows():
             for i in range(n_people):
                 pos = (int(row['x'+str(i)]), int(row['y'+str(i)]))
 
-                color = Visualization.MID_COLOR
+                color = Visualizer.MID_COLOR
                 if row.name.startswith('R'):
-                    color = Visualization.R_COLOR
+                    color = Visualizer.R_COLOR
                 elif row.name.startswith('L'):
-                    color = Visualization.L_COLOR
+                    color = Visualizer.L_COLOR
 
                 if pos[0] > 0 or pos[1] > 0:
                     for key, img in imgs.items():
                         if img is not None:
                             img = cv2.circle(img, pos, 3, color, -1)
 
-    def draw_lines(imgs, pt_df):
+    def draw_lines(self, imgs, pt_df):
         """Draws lines joining body parts on to the given image arrays.
 
         Parameters
@@ -76,8 +119,9 @@ class Visualization:
 
         """
         n_people = len(pt_df.columns) // 3
+
         for i in range(n_people):
-            for line in Visualization.LINE_PATHS:
+            for line in self.paths:
                 pts = np.zeros(shape=(len(line), 2), dtype=np.int32)
                 count = 0
 
@@ -95,9 +139,9 @@ class Visualization:
                 for key, img in imgs.items():
                     if img is not None:
                         cv2.polylines(img, [pts], False,
-                                      Visualization.LINE_COLOR, thickness=2)
+                                      Visualizer.LINE_COLOR, thickness=2)
 
-    def create_videos_from_dataframes(directory, file_basename,
+    def create_videos_from_dataframes(self, file_basename,
                                       body_keypoints_dfs, width, height,
                                       create_blank=True, create_overlay=False,
                                       video_to_overlay=None):
@@ -105,8 +149,6 @@ class Visualization:
 
         Parameters
         ----------
-        directory : str
-            Path to output folder
         file_basename : str
             Base name of file. Will create files <file_basename>_blank.avi
             and/or <file_basename>_overlay.avi
@@ -155,8 +197,8 @@ class Visualization:
                     raise Exception("Not enough frames in overlay video to \
                                      match data frame")
 
-            Visualization.draw_lines(imgs, df)
-            Visualization.draw_points(imgs, df)
+            self.draw_lines(imgs, df)
+            self.draw_points(imgs, df)
 
             for k, v in imgs.items():
                 if v is not None:
@@ -168,7 +210,8 @@ class Visualization:
         for key, img_array in img_arrays.items():
             if len(img_array):
                 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-                filename = "%s_%s.avi" % (file_basename, key)
+                filename = os.path.join(self.output_directory,
+                                        "%s_%s.avi" % (file_basename, key))
                 out = cv2.VideoWriter(filename,
                                       fourcc, 25,
                                       (width, height))
