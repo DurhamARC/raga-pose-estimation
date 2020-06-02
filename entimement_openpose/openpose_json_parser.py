@@ -42,7 +42,7 @@ class OpenPoseJsonParser:
         """
         return len(self.all_data['people'])
 
-    def get_person_keypoints(self, person_index):
+    def get_person_keypoints(self, person_index, parts=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -56,9 +56,9 @@ class OpenPoseJsonParser:
             DataFrame containing the keypoints
 
         """
-        return self.get_multiple_keypoints([person_index])
+        return self.get_multiple_keypoints([person_index], parts)
 
-    def get_multiple_keypoints(self, person_indices):
+    def get_multiple_keypoints(self, person_indices, parts=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -66,10 +66,15 @@ class OpenPoseJsonParser:
         person_indices : array of ints
             Indices of people in file for which to get keypoints
 
+        parts : array of OpenPoseParts
+            Array of parts to include in returned dataframe. Defaults to None,
+            which shows all parts.
+
         Returns
         -------
         DataFrame
-            DataFrame containing the keypoints, labelled with e.g. x0, y0, confidence0, x1, y1, confidence1
+            DataFrame containing the keypoints, labelled with e.g. x0, y0,
+            confidence0, x1, y1, confidence1
 
         """
         column_names = []
@@ -92,5 +97,9 @@ class OpenPoseJsonParser:
 
         body_keypoints_df.columns = column_names
         body_keypoints_df.index = self.ROW_NAMES
+
+        if parts:
+            part_names = [x.value for x in parts]
+            body_keypoints_df = body_keypoints_df.loc[part_names]
 
         return body_keypoints_df
