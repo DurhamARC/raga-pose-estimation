@@ -31,15 +31,12 @@ class Visualizer:
         [OpenPoseParts.R_ANKLE, OpenPoseParts.R_SMALL_TOE]
     ]
 
-    def __init__(self, parts_to_display=None, output_directory=''):
+    def __init__(self, output_directory=''):
         """Initializes a Visualizer instance with a set of parts to display and
         an output directory.
 
         Parameters
         ----------
-        parts_to_display : array of OpenPoseParts
-            Array of parts to display in output videos. Defaults to None,
-            which shows all parts.
         output_directory : str
             Path to video output folder. Directory will be created if it
             doesn't exist.
@@ -52,20 +49,6 @@ class Visualizer:
         self.output_directory = output_directory
         if not os.path.exists(self.output_directory):
             os.mkdir(output_directory)
-
-        self.parts_to_display = parts_to_display or list(OpenPoseParts)
-
-        if parts_to_display is None:
-            self.paths = Visualizer.LINE_PATHS
-        else:
-            self.paths = []
-            for path in Visualizer.LINE_PATHS:
-                new_path = []
-                for part in path:
-                    if part in self.parts_to_display:
-                        new_path.append(part)
-                if new_path:
-                    self.paths.append(new_path)
 
     def draw_points(self, imgs, pt_df):
         """Draws keypoints on to the given image arrays.
@@ -85,8 +68,7 @@ class Visualizer:
 
         """
         n_people = len(pt_df. columns) // 3
-        filtered_df = pt_df.loc[[x.value for x in self.parts_to_display]]
-        for index, row in filtered_df.iterrows():
+        for index, row in pt_df.iterrows():
             for i in range(n_people):
                 pos = (int(row['x'+str(i)]), int(row['y'+str(i)]))
 
@@ -101,7 +83,7 @@ class Visualizer:
                         if img is not None:
                             img = cv2.circle(img, pos, 3, color, -1)
 
-    def draw_lines(self, imgs, pt_df):
+    def draw_lines(self, imgs, pt_df, paths):
         """Draws lines joining body parts on to the given image arrays.
 
         Parameters
@@ -112,6 +94,10 @@ class Visualizer:
         pt_df : DataFrame
             DataFrame containing keypoints
 
+        paths: array of arrays of OpenPoseParts
+            arrays of paths to display, where each path is an array of
+            OpenPoseParts
+
         Returns
         -------
         np.array
@@ -121,16 +107,17 @@ class Visualizer:
         n_people = len(pt_df.columns) // 3
 
         for i in range(n_people):
-            for line in self.paths:
+            for line in paths:
                 pts = np.zeros(shape=(len(line), 2), dtype=np.int32)
                 count = 0
 
                 for part in line:
-                    row = pt_df.loc[part.value, 'x'+str(i):'y'+str(i)]
-                    pt = np.int32(row.values)
-                    if pt[0] > 0 and pt[1] > 0:
-                        pts[count] = pt
-                        count += 1
+                    if part.value in pt_df.index:
+                        row = pt_df.loc[part.value, 'x'+str(i):'y'+str(i)]
+                        pt = np.int32(row.values)
+                        if pt[0] > 0 and pt[1] > 0:
+                            pts[count] = pt
+                            count += 1
 
                 # Filter out zero points, then reshape before drawing
                 pts = pts[pts > 0]
@@ -141,11 +128,26 @@ class Visualizer:
                         cv2.polylines(img, [pts], False,
                                       Visualizer.LINE_COLOR, thickness=2)
 
+    def get_paths_from_dataframe(df):
+        paths = []
+
+        for path in Visualizer.LINE_PATHS:
+            new_path = []
+            for part in path:
+                if part.value in df.index:
+                    new_path.append(part)
+            if new_path:
+                paths.append(new_path)
+
+        return paths
+
     def create_videos_from_dataframes(self, file_basename,
                                       body_keypoints_dfs, width, height,
                                       create_blank=True, create_overlay=False,
                                       video_to_overlay=None):
         """Creates a video visualising the provided array of body keypoints.
+        The lines to draw will be determined by the parts in the first
+        dataframe.
 
         Parameters
         ----------
@@ -181,6 +183,8 @@ class Visualizer:
                 raise Exception("Unable to open video from %s"
                                 % video_to_overlay) from e
 
+        paths = Visualizer.get_paths_from_dataframe(body_keypoints_dfs[0])
+
         # Draw the data from the DataFrame
         img_arrays = {'blank': [], 'overlay': []}
         for df in body_keypoints_dfs:
@@ -197,7 +201,7 @@ class Visualizer:
                     raise Exception("Not enough frames in overlay video to \
                                      match data frame")
 
-            self.draw_lines(imgs, df)
+            self.draw_lines(imgs, df, paths)
             self.draw_points(imgs, df)
 
             for k, v in imgs.items():

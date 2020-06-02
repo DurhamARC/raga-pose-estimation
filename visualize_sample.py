@@ -27,13 +27,12 @@ body_keypoints_dfs = []
 # Each file is a frame in the video
 for file in json_files:
     parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
-    body_keypoints_df = parser.get_multiple_keypoints([0, 1])
+    body_keypoints_df = parser.get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS)
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
 
 
-visualizer = Visualizer(parts_to_display=OpenPosePartGroups.UPPER_BODY_PARTS,
-                        output_directory='output')
+visualizer = Visualizer(output_directory='output')
 visualizer.create_videos_from_dataframes(
     'short_video',
     body_keypoints_dfs,
