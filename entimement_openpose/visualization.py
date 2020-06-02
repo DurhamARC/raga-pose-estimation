@@ -1,4 +1,4 @@
-from sys import platform
+import os
 
 import cv2
 import numpy as np
@@ -108,8 +108,8 @@ class Visualization:
         directory : str
             Path to output folder
         file_basename : str
-            Base name of file. Will create files <file_basename>_blank.mp4
-            and/or <file_basename>_overlay.mp4
+            Base name of file. Will create files <file_basename>_blank.avi
+            and/or <file_basename>_overlay.avi
         body_keypoints_dfs : array of DataFrames
             Array of DataFrames as created by OpenPoseJsonParser
         width : int
@@ -167,10 +167,9 @@ class Visualization:
 
         for key, img_array in img_arrays.items():
             if len(img_array):
-                codec = 'avc1' if platform == 'darwin' else 'H264'
-                fourcc = cv2.VideoWriter_fourcc(*codec)
-                print(fourcc)
-                out = cv2.VideoWriter("%s_%s.mp4" % (file_basename, key),
+                fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+                filename = "%s_%s.avi" % (file_basename, key)
+                out = cv2.VideoWriter(filename,
                                       fourcc, 25,
                                       (width, height))
                 for i in range(len(img_array)):
