@@ -42,7 +42,7 @@ class OpenPoseJsonParser:
         """
         return len(self.all_data['people'])
 
-    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0)):
+    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0):
         """Get the keypoints of a given person.
 
         Parameters
