@@ -42,13 +42,23 @@ class OpenPoseJsonParser:
         """
         return len(self.all_data['people'])
 
-    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0):
+    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
         """Get the keypoints of a given person.
 
         Parameters
         ----------
         person_index : int
             Index of person in file for which to get keypoints
+           
+        parts : array of OpenPoseParts
+            Array of parts to include in returned dataframe. Defaults to None,
+            which shows all parts.
+            
+        confidence_threshold: float threshold in [0, 1] for confidence 
+            Any keypoint candidate with lower confidence will be set to zero. Default is 0.  
+            
+        previous_body_keypoints_df: data frame of previous frame in video, if existent.
+            Default is None.                
 
         Returns
         -------
@@ -56,9 +66,9 @@ class OpenPoseJsonParser:
             DataFrame containing the keypoints
 
         """
-        return self.get_multiple_keypoints([person_index], parts, confidence_threshold)
+        return self.get_multiple_keypoints([person_index], parts, confidence_threshold, previous_body_keypoints_df)
 
-    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0):
+    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -72,6 +82,9 @@ class OpenPoseJsonParser:
             
         confidence_threshold: float threshold in [0, 1] for confidence 
             Any keypoint candidate with lower confidence will be set to zero. Default is 0.    
+            
+        previous_body_keypoints_df: data frame of previous frame in video, if existent.
+            Default is None.                
 
         Returns
         -------
@@ -93,8 +106,7 @@ class OpenPoseJsonParser:
                 np_keypoints = np.array(person_keypoints)
                 # Reshape to rows of x,y,confidence
                 np_v_reshape = np_keypoints.reshape(int(len(np_keypoints)/3), 3)
-		# Set all points with confidence level below threshold to zero 
-                np_v_reshape[np_v_reshape[:, 2]<confidence_threshold] = [0,0,0]
+		
                 # Place in dataframe
                 body_keypoints_df = pd.concat([body_keypoints_df,
                                                pd.DataFrame(np_v_reshape)],
@@ -102,6 +114,23 @@ class OpenPoseJsonParser:
 
         body_keypoints_df.columns = column_names
         body_keypoints_df.index = self.ROW_NAMES
+        # Check whether previous frame had higher confidence points and replace
+        if not previous_body_keypoints_df.empty:
+            for row in body_keypoints_df.itertuples():
+            	for p in range(int(len(body_keypoints_df.columns)/3)):
+            		cname = 'confidence'+str(p)  
+            		xname = 'x'+str(p)
+            		yname = 'y'+str(p)
+            		#print(body_keypoints_df.loc[row.Index, cname])
+            		#print(previous_body_keypoints_df.loc[row.Index, cname])
+            		try:
+            			if body_keypoints_df.loc[row.Index, cname] < previous_body_keypoints_df.loc[row.Index, cname]:
+            				body_keypoints_df.loc[row.Index, xname] = previous_body_keypoints_df.loc[row.Index, xname]
+            				body_keypoints_df.loc[row.Index, yname] = previous_body_keypoints_df.loc[row.Index, yname]
+            				body_keypoints_df.loc[row.Index, cname] = previous_body_keypoints_df.loc[row.Index, cname]	 
+            		except:
+            			print("Skip", row.Index)
+
 
         if parts:
             part_names = [x.value for x in parts]

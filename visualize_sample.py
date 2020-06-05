@@ -1,5 +1,6 @@
 import cv2
 import os
+import pandas as pd
 
 from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import OpenPosePartGroups
@@ -25,11 +26,13 @@ body_keypoints_dfs = []
 
 # Loop through all json files in output directory
 # Each file is a frame in the video
+previous_body_keypoints_df = pd.DataFrame();
 for file in json_files:
     parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
-    body_keypoints_df = parser.get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.3)
+    body_keypoints_df = parser.get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.0, previous_body_keypoints_df)
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
+    previous_body_keypoints_df = body_keypoints_df
 
 
 visualizer = Visualizer(output_directory='output')
