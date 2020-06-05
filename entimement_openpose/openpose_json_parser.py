@@ -90,6 +90,8 @@ class OpenPoseJsonParser:
                 np_keypoints = np.array(person_keypoints)
                 # Reshape to rows of x,y,confidence
                 np_v_reshape = np_keypoints.reshape(int(len(np_keypoints)/3), 3)
+		# Set all points with confidence level below threshold to zero 
+                np_v_reshape[np_v_reshape[:, 2]<confidence_threshold] = [0,0,0]
                 # Place in dataframe
                 body_keypoints_df = pd.concat([body_keypoints_df,
                                                pd.DataFrame(np_v_reshape)],
@@ -97,8 +99,6 @@ class OpenPoseJsonParser:
 
         body_keypoints_df.columns = column_names
         body_keypoints_df.index = self.ROW_NAMES
-
-	body_keypoints_df = body_keypoints_df.loc[body_keypoints_df[2]>=confidence_threshold]
 
         if parts:
             part_names = [x.value for x in parts]
