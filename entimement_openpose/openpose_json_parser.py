@@ -69,6 +69,9 @@ class OpenPoseJsonParser:
         parts : array of OpenPoseParts
             Array of parts to include in returned dataframe. Defaults to None,
             which shows all parts.
+            
+        confidence_threshold: float threshold in [0, 1] for confidence 
+            Any keypoint candidate with lower confidence will be set to zero. Default is 0.    
 
         Returns
         -------
