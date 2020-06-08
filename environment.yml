@@ -6,5 +6,5 @@ dependencies:
   - numpy
   - python=3.7
   - opencv
+  - pytest
 prefix: /usr/local/Caskroom/miniconda/base/envs/openpose-entimement
-
