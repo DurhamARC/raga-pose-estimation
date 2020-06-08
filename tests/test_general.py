@@ -32,3 +32,7 @@ def test_parser():
     assert(type(upper_keypoints) == pd.DataFrame)
     assert(upper_keypoints.shape == (len(OpenPosePartGroups.UPPER_BODY_PARTS), 3))
     assert(OpenPoseParts.L_ANKLE not in upper_keypoints.index)
+
+
+def test_failure():
+    assert(False)
