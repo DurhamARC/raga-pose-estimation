@@ -63,14 +63,13 @@ class Visualizer:
 
         Returns
         -------
-        np.array
-            Image array in OpenCV format
+        None
 
         """
         n_people = len(pt_df. columns) // 3
         for index, row in pt_df.iterrows():
             for i in range(n_people):
-                pos = (int(row['x'+str(i)]), int(row['y'+str(i)]))
+                pos = (int(row[i*3]), int(row[i*3+1]))
 
                 color = Visualizer.MID_COLOR
                 if row.name.startswith('R'):
@@ -88,8 +87,8 @@ class Visualizer:
 
         Parameters
         ----------
-        imgs : array of np.array
-            Array of image arrays in OpenCV format
+        imgs : dictionary of np.array
+            Dictionary of image arrays in OpenCV format
 
         pt_df : DataFrame
             DataFrame containing keypoints
@@ -100,8 +99,7 @@ class Visualizer:
 
         Returns
         -------
-        np.array
-            Image array in OpenCV format
+        None
 
         """
         n_people = len(pt_df.columns) // 3
@@ -113,7 +111,8 @@ class Visualizer:
 
                 for part in line:
                     if part.value in pt_df.index:
-                        row = pt_df.loc[part.value, 'x'+str(i):'y'+str(i)]
+                        part_index = pt_df.index.get_loc(part.value)
+                        row = pt_df.iloc[part_index, i*3:i*3+2]
                         pt = np.int32(row.values)
                         if pt[0] > 0 and pt[1] > 0:
                             pts[count] = pt
