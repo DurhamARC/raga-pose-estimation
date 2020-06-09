@@ -7,4 +7,5 @@ dependencies:
   - python=3.7
   - opencv
   - pytest
+  - pytest-cov
 prefix: /usr/local/Caskroom/miniconda/base/envs/openpose-entimement
