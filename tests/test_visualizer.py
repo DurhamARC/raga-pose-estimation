@@ -40,6 +40,28 @@ def test_create_video(dummy_dataframe):
     assert(size > 1000 and size < 10000)
 
 
+def test_create_overlay_invalid():
+    viz = Visualizer('output')
+
+    # Create overlay without specifying video to overlay
+    with pytest.raises(ValueError):
+        viz.create_videos_from_dataframes('test_invalid', [pd.DataFrame()],
+                                          20, 10, create_overlay=True)
+
+    # Try to create overlay specifying invalid video
+    with pytest.raises(ValueError):
+        viz.create_videos_from_dataframes('test_invalid', [pd.DataFrame()],
+                                          20, 10, create_overlay=True,
+                                          video_to_overlay="notarealvideo.avi")
+
+    # Try to create overlay with valid file but not enough frames
+    many_dfs = [pd.DataFrame() for x in range(500)]
+    with pytest.raises(ValueError):
+        viz.create_videos_from_dataframes('test_invalid', many_dfs,
+                                          20, 10, create_overlay=True,
+                                          video_to_overlay="example_files/short_video.mp4")
+
+
 def test_draw_points(dummy_dataframe):
     viz = Visualizer('output')
     height = 10

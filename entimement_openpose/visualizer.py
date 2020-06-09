@@ -176,11 +176,14 @@ class Visualizer:
         """
         cap = None
         if create_overlay:
-            try:
-                cap = cv2.VideoCapture(video_to_overlay)
-            except Exception as e:
-                raise Exception("Unable to open video from %s"
-                                % video_to_overlay) from e
+            if not video_to_overlay:
+                raise ValueError("You must provide video_to_overlay "
+                                 "if create_overlay is True")
+
+            if not os.path.exists(video_to_overlay):
+                raise ValueError("video_to_overlay is not a valid file")
+
+            cap = cv2.VideoCapture(video_to_overlay)
 
         paths = Visualizer.get_paths_from_dataframe(body_keypoints_dfs[0])
 
@@ -193,12 +196,11 @@ class Visualizer:
                 imgs['blank'] = np.ones((height, width, 3), np.uint8)
 
             if create_overlay:
-                if cap.isOpened():
-                    ret, frame = cap.read()
-                    imgs['overlay'] = frame
-                else:
-                    raise Exception("Not enough frames in overlay video to \
-                                     match data frame")
+                ret, frame = cap.read()
+                if not ret:
+                    raise ValueError("Not enough frames in overlay video to "
+                                     "match data frame")
+                imgs['overlay'] = frame
 
             self.draw_lines(imgs, df, paths)
             self.draw_points(imgs, df)
