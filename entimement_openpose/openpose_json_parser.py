@@ -53,10 +53,12 @@ class OpenPoseJsonParser:
         Returns
         -------
         DataFrame
-            DataFrame containing the keypoints
+            DataFrame containing the keypoints, labelled as x, y, confidence
 
         """
-        return self.get_multiple_keypoints([person_index], parts)
+        df = self.get_multiple_keypoints([person_index], parts)
+        df.columns = self.COLUMN_NAMES
+        return df
 
     def get_multiple_keypoints(self, person_indices, parts=None):
         """Get the keypoints of a given person.
