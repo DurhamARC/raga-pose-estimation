@@ -1,4 +1,4 @@
-# This is a basic workflow to help you get started with Actions
+# Workflow to run tests in conda
 
 name: CI
 
@@ -6,7 +6,6 @@ name: CI
 # events but only for the master branch
 on: [push, pull_request]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
     name: Test (${{ matrix.python-version }}, ${{ matrix.os }})
