@@ -117,9 +117,7 @@ class OpenPoseJsonParser:
         # Check whether previous frame had higher confidence points and replace
         if not previous_body_keypoints_df.empty:
             for row in body_keypoints_df.itertuples():
-            	cname = []
-            	xname = []
-            	yname = []	
+
             	for p in range(int(len(body_keypoints_df.columns)/3)):
             		cname = 'confidence'+str(p)  
             		xname = 'x'+str(p)
