@@ -58,7 +58,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is None.                
+            Default is an empty dataframe.                 
 
         Returns
         -------
@@ -69,6 +69,48 @@ class OpenPoseJsonParser:
         df = self.get_multiple_keypoints([person_index], parts)
         df.columns = self.COLUMN_NAMES
         return df
+
+    def sort_persons_by_x_position(self, body_keypoints_df):
+    	"""Sort the data so that the left-most person has index 0, the next has index 1, etc.
+    	
+    	Parameters
+	----------
+	body_keypoints_df: data frame that is to be sorted.
+	
+	Returns
+	-------
+    	sorted_body_keypoints_df
+    	    Sorted DataFrame.
+    	"""
+    	sorted_body_keypoints_df = pd.DataFrame()
+    	   	
+    	#midpoints_row = body_keypoints_df.loc[['MidHip']]
+    	
+    	print(body_keypoints_df)
+    	
+    	idx = np.argsort(body_keypoints_df.loc['MidHip'].iloc[0::3])
+    	
+    	#print(idx)
+    	
+    	for i in range(len(idx)):
+    	    cname = 'confidence'+str(i) 
+    	    cname_old = 'confidence'+str(idx[i])  
+    	    xname = 'x'+str(i)
+    	    xname_old = 'x'+str(idx[i])
+    	    yname = 'y'+str(i)
+    	    yname_old = 'y'+str(idx[i])
+    	        	    
+    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[xname_old]], how="right", rsuffix='new')
+    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[yname_old]], how="right", rsuffix='new')
+    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[cname_old]], how="right", rsuffix='new')
+    	    
+    	    sorted_body_keypoints_df=body_keypoints_df.rename(columns={xname_old+'new':xname})
+    	    sorted_body_keypoints_df=body_keypoints_df.rename(columns={yname_old+'new':yname})
+    	    sorted_body_keypoints_df=body_keypoints_df.rename(columns={cname_old+'new':cname})
+    	    
+    	print(sorted_body_keypoints_df)    
+    	
+    	return sorted_body_keypoints_df
 
     def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
         """Get the keypoints of a given person.
@@ -86,7 +128,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is None.                
+            Default is an empty dataframe.             
 
         Returns
         -------
