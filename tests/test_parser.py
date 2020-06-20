@@ -5,7 +5,7 @@ from entimement_openpose.openpose_parts import OpenPoseParts, OpenPosePartGroups
 
 
 def test_parser():
-    parser = OpenPoseJsonParser('example_files/output_json/video_000000000000_keypoints.json')
+    parser = OpenPoseJsonParser('example_files/example_3people/output_json/video_000000000000_keypoints.json')
     assert(parser.get_person_count() == 3)
 
     # Check get_person_keypoints
