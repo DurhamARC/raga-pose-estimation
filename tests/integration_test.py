@@ -39,7 +39,7 @@ def test_create_overlay():
         576,
         create_blank=False,
         create_overlay=True,
-        video_to_overlay='example_files/short_video.mp4'
+        video_to_overlay='example_files/example_3people/short_video.mp4'
     )
 
     # Check video file has been created and is about the size we expect
