@@ -86,29 +86,26 @@ class OpenPoseJsonParser:
     	   	
     	#midpoints_row = body_keypoints_df.loc[['MidHip']]
     	
-    	print(body_keypoints_df)
+    	idx = np.argsort(body_keypoints_df.loc['Nose'].iloc[0::3])
     	
-    	idx = np.argsort(body_keypoints_df.loc['MidHip'].iloc[0::3])
-    	
-    	#print(idx)
-    	
-    	for i in range(len(idx)):
-    	    cname = 'confidence'+str(i) 
-    	    cname_old = 'confidence'+str(idx[i])  
-    	    xname = 'x'+str(i)
-    	    xname_old = 'x'+str(idx[i])
-    	    yname = 'y'+str(i)
-    	    yname_old = 'y'+str(idx[i])
+    	if (list(range(len(idx))) == list(idx)):
+    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df, how="right")
+    	else:
+    	    for i in range(len(idx)):
+    	        cname = 'confidence'+str(i) 
+    	        cname_old = 'confidence'+str(idx[i])  
+    	        xname = 'x'+str(i)
+    	        xname_old = 'x'+str(idx[i])
+    	        yname = 'y'+str(i)
+    	        yname_old = 'y'+str(idx[i])
     	        	    
-    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[xname_old]], how="right", rsuffix='new')
-    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[yname_old]], how="right", rsuffix='new')
-    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[cname_old]], how="right", rsuffix='new')
-    	    
-    	    sorted_body_keypoints_df=body_keypoints_df.rename(columns={xname_old+'new':xname})
-    	    sorted_body_keypoints_df=body_keypoints_df.rename(columns={yname_old+'new':yname})
-    	    sorted_body_keypoints_df=body_keypoints_df.rename(columns={cname_old+'new':cname})
-    	    
-    	print(sorted_body_keypoints_df)    
+    	        sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[xname_old]], how="right", rsuffix='new')
+    	        sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[yname_old]], how="right", rsuffix='new')
+    	        sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[cname_old]], how="right", rsuffix='new')
+
+    	        sorted_body_keypoints_df.rename(columns={sorted_body_keypoints_df.columns[i*3]:xname},inplace=True)
+    	        sorted_body_keypoints_df.rename(columns={sorted_body_keypoints_df.columns[i*3+1]:yname},inplace=True)
+    	        sorted_body_keypoints_df.rename(columns={sorted_body_keypoints_df.columns[i*3+2]:cname},inplace=True)  
     	
     	return sorted_body_keypoints_df
 
@@ -169,6 +166,8 @@ class OpenPoseJsonParser:
             		try:
             			#print(body_keypoints_df.loc[row.Index, cname])
             			#print(previous_body_keypoints_df.loc[row.Index,
+            			body_keypoints_df = sort_persons_by_x_position(body_keypoints_df)
+            			
             			if body_keypoints_df.loc[row.Index, cname] < confidence_threshold and body_keypoints_df.loc[row.Index, cname] < previous_body_keypoints_df.loc[row.Index, cname]:
             				body_keypoints_df.loc[row.Index, xname] = previous_body_keypoints_df.loc[row.Index, xname]
             				body_keypoints_df.loc[row.Index, yname] = previous_body_keypoints_df.loc[row.Index, yname]
