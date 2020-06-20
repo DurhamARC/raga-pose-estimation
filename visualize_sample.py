@@ -20,6 +20,7 @@ path_to_json = os.path.realpath("example_files/example_3people/output_json/")
 # Import Json files
 json_files = [pos_json for pos_json in os.listdir(path_to_json)
               if pos_json.endswith('.json')]
+json_files.sort()
 
 # Get array for dataframes
 body_keypoints_dfs = []
