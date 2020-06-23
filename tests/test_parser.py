@@ -34,9 +34,9 @@ def test_parser():
     assert(OpenPoseParts.L_ANKLE not in upper_keypoints.index)
     
     # Test person ordering (0 is left-most, 1 is next)
-    sorted_person_keypoints = parser.sort_persons_by_x_position(person_keypoints)
+    sorted_person_keypoints = parser.sort_persons_by_x_position(all_keypoints)
     assert(sorted_person_keypoints.loc[OpenPoseParts.MID_HIP.value].iloc[0] < sorted_person_keypoints.loc[OpenPoseParts.MID_HIP.value].iloc[3])
     
     # Test handing in a confidence threshold
-    person_keypoints2 = get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, person_keypoints)
-    assert(person_keypoints2.equals(person_keypoints))
+    all_keypoints2 = get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, all_keypoints)
+    assert(all_keypoints.equals(all_keypoints2))
