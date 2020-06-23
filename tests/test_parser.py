@@ -5,7 +5,7 @@ from entimement_openpose.openpose_parts import OpenPoseParts, OpenPosePartGroups
 
 
 def test_parser():
-    parser = OpenPoseJsonParser('example_files/example_3people/output_json/video_000000000000_keypoints.json')
+    parser = OpenPoseJsonParser('example_files/example_3people/output_json/video_000000000093_keypoints.json') # choose one where the people are not already sorted
     assert(parser.get_person_count() == 3)
 
     # Check get_person_keypoints
@@ -32,3 +32,11 @@ def test_parser():
     assert(type(upper_keypoints) == pd.DataFrame)
     assert(upper_keypoints.shape == (len(OpenPosePartGroups.UPPER_BODY_PARTS), 3))
     assert(OpenPoseParts.L_ANKLE not in upper_keypoints.index)
+    
+    # Test person ordering (0 is left-most, 1 is next)
+    sorted_person_keypoints = parser.sort_persons_by_x_position(person_keypoints)
+    assert(body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0] < body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[3])
+    
+    # Test handing in a confidence threshold
+    person_keypoints2 = get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, person_keypoints)
+    assert(person_keypoints2.equals(person_keypoints))
