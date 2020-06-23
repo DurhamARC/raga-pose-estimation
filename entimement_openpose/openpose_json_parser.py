@@ -42,7 +42,7 @@ class OpenPoseJsonParser:
         """
         return len(self.all_data['people'])
 
-    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
+    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
         """Get the keypoints of a given person.
 
         Parameters
@@ -58,7 +58,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is None.                 
+            Default is and empty data frame.                 
 
         Returns
         -------
@@ -84,10 +84,13 @@ class OpenPoseJsonParser:
     	"""
     	sorted_body_keypoints_df = pd.DataFrame()
     	
+    	# Find permutation to sort x values in ascending order
     	idx = np.argsort(body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0::3])
     	
+    	# Test whether permutation equals just the numbering (1, 2, 3, ...), i.e. whether x values are already sorted.
     	if (list(range(len(idx))) == list(idx)):
     	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df, how="right")
+    	# Otherwise, sort them    
     	else:
     	    for i in range(len(idx)):
     	        cname = 'confidence'+str(i) 
@@ -107,7 +110,7 @@ class OpenPoseJsonParser:
     	
     	return sorted_body_keypoints_df
 
-    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
+    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
         """Get the keypoints of a given person.
 
         Parameters
@@ -123,7 +126,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is None.             
+            Default is an empty data frame.             
 
         Returns
         -------
