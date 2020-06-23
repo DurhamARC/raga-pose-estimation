@@ -35,7 +35,7 @@ def test_parser():
     
     # Test person ordering (0 is left-most, 1 is next)
     sorted_person_keypoints = parser.sort_persons_by_x_position(person_keypoints)
-    assert(body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0] < body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[3])
+    assert(sorted_person_keypoints.loc[OpenPoseParts.MID_HIP.value].iloc[0] < sorted_person_keypoints.loc[OpenPoseParts.MID_HIP.value].iloc[3])
     
     # Test handing in a confidence threshold
     person_keypoints2 = get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, person_keypoints)
