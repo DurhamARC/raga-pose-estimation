@@ -42,7 +42,7 @@ class OpenPoseJsonParser:
         """
         return len(self.all_data['people'])
 
-    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
+    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -58,7 +58,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is an empty dataframe.                 
+            Default is None.                 
 
         Returns
         -------
@@ -83,10 +83,8 @@ class OpenPoseJsonParser:
     	    Sorted DataFrame.
     	"""
     	sorted_body_keypoints_df = pd.DataFrame()
-    	   	
-    	#midpoints_row = body_keypoints_df.loc[['MidHip']]
     	
-    	idx = np.argsort(body_keypoints_df.loc['Nose'].iloc[0::3])
+    	idx = np.argsort(body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0::3])
     	
     	if (list(range(len(idx))) == list(idx)):
     	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df, how="right")
@@ -109,7 +107,7 @@ class OpenPoseJsonParser:
     	
     	return sorted_body_keypoints_df
 
-    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
+    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -125,7 +123,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is an empty dataframe.             
+            Default is None.             
 
         Returns
         -------
@@ -163,17 +161,16 @@ class OpenPoseJsonParser:
             		cname = 'confidence'+str(p)  
             		xname = 'x'+str(p)
             		yname = 'y'+str(p)
-            		try:
-            			#print(body_keypoints_df.loc[row.Index, cname])
-            			#print(previous_body_keypoints_df.loc[row.Index,
-            			body_keypoints_df = sort_persons_by_x_position(body_keypoints_df)
+            		
+            		if row.Index in previous_body_keypoints_df.index:
+            		
+            			body_keypoints_df = self.sort_persons_by_x_position(body_keypoints_df)
             			
             			if body_keypoints_df.loc[row.Index, cname] < confidence_threshold and body_keypoints_df.loc[row.Index, cname] < previous_body_keypoints_df.loc[row.Index, cname]:
             				body_keypoints_df.loc[row.Index, xname] = previous_body_keypoints_df.loc[row.Index, xname]
             				body_keypoints_df.loc[row.Index, yname] = previous_body_keypoints_df.loc[row.Index, yname]
             				body_keypoints_df.loc[row.Index, cname] = previous_body_keypoints_df.loc[row.Index, cname]	 
-            		except:
-            			print("Skip", row.Index)
+
 
 
         if parts:

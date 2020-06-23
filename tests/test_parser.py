@@ -38,5 +38,5 @@ def test_parser():
     assert(sorted_person_keypoints.loc[OpenPoseParts.MID_HIP.value].iloc[0] < sorted_person_keypoints.loc[OpenPoseParts.MID_HIP.value].iloc[3])
     
     # Test handing in a confidence threshold
-    all_keypoints2 = get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, all_keypoints)
+    all_keypoints2 = parser.get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, all_keypoints)
     assert(all_keypoints.equals(all_keypoints2))
