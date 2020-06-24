@@ -6,7 +6,7 @@ from entimement_openpose.visualizer import Visualizer
 
 
 def test_create_overlay():
-    path_to_json = os.path.realpath("example_files/output_json/")
+    path_to_json = os.path.realpath("example_files/example_3people/output_json/")
 
     # Import Json files
     json_files = [pos_json for pos_json in os.listdir(path_to_json)
@@ -39,7 +39,7 @@ def test_create_overlay():
         576,
         create_blank=False,
         create_overlay=True,
-        video_to_overlay='example_files/short_video.mp4'
+        video_to_overlay='example_files/example_3people/short_video.mp4'
     )
 
     # Check video file has been created and is about the size we expect
