@@ -42,7 +42,7 @@ class OpenPoseJsonParser:
         """
         return len(self.all_data['people'])
 
-    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
+    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -58,7 +58,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is and empty data frame.                 
+            Default is None.                 
 
         Returns
         -------
@@ -110,7 +110,7 @@ class OpenPoseJsonParser:
     	
     	return sorted_body_keypoints_df
 
-    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=pd.DataFrame()):
+    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
         """Get the keypoints of a given person.
 
         Parameters
@@ -126,7 +126,7 @@ class OpenPoseJsonParser:
             Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
             
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is an empty data frame.             
+            Default is None.             
 
         Returns
         -------
@@ -157,7 +157,7 @@ class OpenPoseJsonParser:
         body_keypoints_df.columns = column_names
         body_keypoints_df.index = self.ROW_NAMES
         # Check whether previous frame had higher confidence points and replace
-        if not previous_body_keypoints_df.empty:
+        if not previous_body_keypoints_df is None and not previous_body_keypoints_df.empty:
             for row in body_keypoints_df.itertuples():
 
             	for p in range(int(len(body_keypoints_df.columns)/3)):
