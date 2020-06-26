@@ -1,4 +1,3 @@
-
 from enum import Enum
 
 
@@ -8,6 +7,7 @@ class OpenPoseParts(Enum):
     (We could get these from OpenPose, but defining them here means we can work
     on machines where OpenPose is not installed.)
     """
+
     NOSE = "Nose"
     NECK = "Neck"
     R_SHOULDER = "RShoulder"
@@ -36,18 +36,34 @@ class OpenPoseParts(Enum):
 
 
 class OpenPosePartGroups:
-    UPPER_BODY_PARTS = [OpenPoseParts.NOSE, OpenPoseParts.NECK,
-                        OpenPoseParts.R_SHOULDER, OpenPoseParts.R_ELBOW,
-                        OpenPoseParts.R_WRIST, OpenPoseParts.L_SHOULDER,
-                        OpenPoseParts.L_ELBOW, OpenPoseParts.L_WRIST,
-                        OpenPoseParts.R_EYE, OpenPoseParts.L_EYE,
-                        OpenPoseParts.R_EAR, OpenPoseParts.L_EAR,
-                        OpenPoseParts.MID_HIP]
+    UPPER_BODY_PARTS = [
+        OpenPoseParts.NOSE,
+        OpenPoseParts.NECK,
+        OpenPoseParts.R_SHOULDER,
+        OpenPoseParts.R_ELBOW,
+        OpenPoseParts.R_WRIST,
+        OpenPoseParts.L_SHOULDER,
+        OpenPoseParts.L_ELBOW,
+        OpenPoseParts.L_WRIST,
+        OpenPoseParts.R_EYE,
+        OpenPoseParts.L_EYE,
+        OpenPoseParts.R_EAR,
+        OpenPoseParts.L_EAR,
+        OpenPoseParts.MID_HIP,
+    ]
 
-    LOWER_BODY_PARTS = [OpenPoseParts.MID_HIP, OpenPoseParts.R_HIP,
-                        OpenPoseParts.R_KNEE, OpenPoseParts.R_ANKLE,
-                        OpenPoseParts.L_HIP, OpenPoseParts.L_KNEE,
-                        OpenPoseParts.L_ANKLE, OpenPoseParts.L_BIG_TOE,
-                        OpenPoseParts.L_SMALL_TOE, OpenPoseParts.L_HEEL,
-                        OpenPoseParts.R_BIG_TOE, OpenPoseParts.R_SMALL_TOE,
-                        OpenPoseParts.R_HEEL]
+    LOWER_BODY_PARTS = [
+        OpenPoseParts.MID_HIP,
+        OpenPoseParts.R_HIP,
+        OpenPoseParts.R_KNEE,
+        OpenPoseParts.R_ANKLE,
+        OpenPoseParts.L_HIP,
+        OpenPoseParts.L_KNEE,
+        OpenPoseParts.L_ANKLE,
+        OpenPoseParts.L_BIG_TOE,
+        OpenPoseParts.L_SMALL_TOE,
+        OpenPoseParts.L_HEEL,
+        OpenPoseParts.R_BIG_TOE,
+        OpenPoseParts.R_SMALL_TOE,
+        OpenPoseParts.R_HEEL,
+    ]

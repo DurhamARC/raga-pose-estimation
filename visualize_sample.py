@@ -9,7 +9,7 @@ from entimement_openpose.visualizer import Visualizer
 # Create a video from JSON point data
 
 # video file
-cap = cv2.VideoCapture('example_files/example_3people/short_video.mp4')
+cap = cv2.VideoCapture("example_files/example_3people/short_video.mp4")
 width = int(cap.get(3))
 height = int(cap.get(4))
 cap.release()
@@ -18,8 +18,11 @@ cap.release()
 path_to_json = os.path.realpath("example_files/example_3people/output_json/")
 
 # Import Json files
-json_files = [pos_json for pos_json in os.listdir(path_to_json)
-              if pos_json.endswith('.json')]
+json_files = [
+    pos_json
+    for pos_json in os.listdir(path_to_json)
+    if pos_json.endswith(".json")
+]
 json_files.sort()
 
 # Get array for dataframes
@@ -27,22 +30,27 @@ body_keypoints_dfs = []
 
 # Loop through all json files in output directory
 # Each file is a frame in the video
-previous_body_keypoints_df = pd.DataFrame();
+previous_body_keypoints_df = pd.DataFrame()
 for file in json_files:
     parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
-    body_keypoints_df = parser.get_multiple_keypoints([0, 1], OpenPosePartGroups.UPPER_BODY_PARTS, 0.7, previous_body_keypoints_df)
+    body_keypoints_df = parser.get_multiple_keypoints(
+        [0, 1],
+        OpenPosePartGroups.UPPER_BODY_PARTS,
+        0.7,
+        previous_body_keypoints_df,
+    )
     body_keypoints_df.reset_index()
     body_keypoints_dfs.append(body_keypoints_df)
     previous_body_keypoints_df = body_keypoints_df
 
 
-visualizer = Visualizer(output_directory='output')
+visualizer = Visualizer(output_directory="output")
 visualizer.create_videos_from_dataframes(
-    'short_video',
+    "short_video",
     body_keypoints_dfs,
     width,
     height,
     create_blank=True,
     create_overlay=True,
-    video_to_overlay='example_files/example_3people/short_video.mp4'
+    video_to_overlay="example_files/example_3people/short_video.mp4",
 )

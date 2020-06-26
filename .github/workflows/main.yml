@@ -41,6 +41,9 @@ jobs:
           use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
       - shell: bash -l {0}
         run: |
+          black -c .
+      - shell: bash -l {0}
+        run: |
           pytest
       - name: Upload pytest test results
         uses: actions/upload-artifact@v1

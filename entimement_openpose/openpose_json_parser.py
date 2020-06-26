@@ -24,7 +24,7 @@ class OpenPoseJsonParser:
 
     """
 
-    COLUMN_NAMES = ['x', 'y', 'confidence']
+    COLUMN_NAMES = ["x", "y", "confidence"]
     ROW_NAMES = [p.value for p in OpenPoseParts]
 
     def __init__(self, filepath):
@@ -40,9 +40,15 @@ class OpenPoseJsonParser:
             Number of people detected in file
 
         """
-        return len(self.all_data['people'])
+        return len(self.all_data["people"])
 
-    def get_person_keypoints(self, person_index, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
+    def get_person_keypoints(
+        self,
+        person_index,
+        parts=None,
+        confidence_threshold=0,
+        previous_body_keypoints_df=None,
+    ):
         """Get the keypoints of a given person.
 
         Parameters
@@ -71,7 +77,7 @@ class OpenPoseJsonParser:
         return df
 
     def sort_persons_by_x_position(self, body_keypoints_df):
-    	"""Sort the data so that the left-most person has index 0, the next has index 1, etc.
+        """Sort the data so that the left-most person has index 0, the next has index 1, etc.
     	
     	Parameters
 	----------
@@ -82,35 +88,64 @@ class OpenPoseJsonParser:
     	sorted_body_keypoints_df
     	    Sorted DataFrame.
     	"""
-    	sorted_body_keypoints_df = pd.DataFrame()
-    	
-    	# Find permutation to sort x values in ascending order
-    	idx = np.argsort(body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0::3])
-    	
-    	# Test whether permutation equals just the numbering (1, 2, 3, ...), i.e. whether x values are already sorted.
-    	if (list(range(len(idx))) == list(idx)):
-    	    sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df, how="right")
-    	# Otherwise, sort them    
-    	else:
-    	    for i in range(len(idx)):
-    	        cname = 'confidence'+str(i) 
-    	        cname_old = 'confidence'+str(idx[i])  
-    	        xname = 'x'+str(i)
-    	        xname_old = 'x'+str(idx[i])
-    	        yname = 'y'+str(i)
-    	        yname_old = 'y'+str(idx[i])
-    	        	    
-    	        sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[xname_old]], how="right", rsuffix='new')
-    	        sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[yname_old]], how="right", rsuffix='new')
-    	        sorted_body_keypoints_df=sorted_body_keypoints_df.join(body_keypoints_df[[cname_old]], how="right", rsuffix='new')
+        sorted_body_keypoints_df = pd.DataFrame()
 
-    	        sorted_body_keypoints_df.rename(columns={sorted_body_keypoints_df.columns[i*3]:xname},inplace=True)
-    	        sorted_body_keypoints_df.rename(columns={sorted_body_keypoints_df.columns[i*3+1]:yname},inplace=True)
-    	        sorted_body_keypoints_df.rename(columns={sorted_body_keypoints_df.columns[i*3+2]:cname},inplace=True)  
-    	
-    	return sorted_body_keypoints_df
+        # Find permutation to sort x values in ascending order
+        idx = np.argsort(
+            body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0::3]
+        )
 
-    def get_multiple_keypoints(self, person_indices, parts=None, confidence_threshold=0, previous_body_keypoints_df=None):
+        # Test whether permutation equals just the numbering (1, 2, 3, ...), i.e. whether x values are already sorted.
+        if list(range(len(idx))) == list(idx):
+            sorted_body_keypoints_df = sorted_body_keypoints_df.join(
+                body_keypoints_df, how="right"
+            )
+        # Otherwise, sort them
+        else:
+            for i in range(len(idx)):
+                cname = "confidence" + str(i)
+                cname_old = "confidence" + str(idx[i])
+                xname = "x" + str(i)
+                xname_old = "x" + str(idx[i])
+                yname = "y" + str(i)
+                yname_old = "y" + str(idx[i])
+
+                sorted_body_keypoints_df = sorted_body_keypoints_df.join(
+                    body_keypoints_df[[xname_old]], how="right", rsuffix="new"
+                )
+                sorted_body_keypoints_df = sorted_body_keypoints_df.join(
+                    body_keypoints_df[[yname_old]], how="right", rsuffix="new"
+                )
+                sorted_body_keypoints_df = sorted_body_keypoints_df.join(
+                    body_keypoints_df[[cname_old]], how="right", rsuffix="new"
+                )
+
+                sorted_body_keypoints_df.rename(
+                    columns={sorted_body_keypoints_df.columns[i * 3]: xname},
+                    inplace=True,
+                )
+                sorted_body_keypoints_df.rename(
+                    columns={
+                        sorted_body_keypoints_df.columns[i * 3 + 1]: yname
+                    },
+                    inplace=True,
+                )
+                sorted_body_keypoints_df.rename(
+                    columns={
+                        sorted_body_keypoints_df.columns[i * 3 + 2]: cname
+                    },
+                    inplace=True,
+                )
+
+        return sorted_body_keypoints_df
+
+    def get_multiple_keypoints(
+        self,
+        person_indices,
+        parts=None,
+        confidence_threshold=0,
+        previous_body_keypoints_df=None,
+    ):
         """Get the keypoints of a given person.
 
         Parameters
@@ -144,37 +179,61 @@ class OpenPoseJsonParser:
                 for c in self.COLUMN_NAMES:
                     column_names.append(c + str(i))
 
-                person_keypoints = self.all_data['people'][pi]['pose_keypoints_2d']
+                person_keypoints = self.all_data["people"][pi][
+                    "pose_keypoints_2d"
+                ]
                 np_keypoints = np.array(person_keypoints)
                 # Reshape to rows of x,y,confidence
-                np_v_reshape = np_keypoints.reshape(int(len(np_keypoints)/3), 3)
-		
+                np_v_reshape = np_keypoints.reshape(
+                    int(len(np_keypoints) / 3), 3
+                )
+
                 # Place in dataframe
-                body_keypoints_df = pd.concat([body_keypoints_df,
-                                               pd.DataFrame(np_v_reshape)],
-                                              axis=1)
+                body_keypoints_df = pd.concat(
+                    [body_keypoints_df, pd.DataFrame(np_v_reshape)], axis=1
+                )
 
         body_keypoints_df.columns = column_names
         body_keypoints_df.index = self.ROW_NAMES
         # Check whether previous frame had higher confidence points and replace
-        if not previous_body_keypoints_df is None and not previous_body_keypoints_df.empty:
+        if (
+            not previous_body_keypoints_df is None
+            and not previous_body_keypoints_df.empty
+        ):
             for row in body_keypoints_df.itertuples():
 
-            	for p in range(int(len(body_keypoints_df.columns)/3)):
-            		cname = 'confidence'+str(p)  
-            		xname = 'x'+str(p)
-            		yname = 'y'+str(p)
-            		
-            		if row.Index in previous_body_keypoints_df.index:
-            		
-            			body_keypoints_df = self.sort_persons_by_x_position(body_keypoints_df)
-            			
-            			if body_keypoints_df.loc[row.Index, cname] < confidence_threshold and body_keypoints_df.loc[row.Index, cname] < previous_body_keypoints_df.loc[row.Index, cname]:
-            				body_keypoints_df.loc[row.Index, xname] = previous_body_keypoints_df.loc[row.Index, xname]
-            				body_keypoints_df.loc[row.Index, yname] = previous_body_keypoints_df.loc[row.Index, yname]
-            				body_keypoints_df.loc[row.Index, cname] = previous_body_keypoints_df.loc[row.Index, cname]	 
+                for p in range(int(len(body_keypoints_df.columns) / 3)):
+                    cname = "confidence" + str(p)
+                    xname = "x" + str(p)
+                    yname = "y" + str(p)
 
+                    if row.Index in previous_body_keypoints_df.index:
 
+                        body_keypoints_df = self.sort_persons_by_x_position(
+                            body_keypoints_df
+                        )
+
+                        if (
+                            body_keypoints_df.loc[row.Index, cname]
+                            < confidence_threshold
+                            and body_keypoints_df.loc[row.Index, cname]
+                            < previous_body_keypoints_df.loc[row.Index, cname]
+                        ):
+                            body_keypoints_df.loc[
+                                row.Index, xname
+                            ] = previous_body_keypoints_df.loc[
+                                row.Index, xname
+                            ]
+                            body_keypoints_df.loc[
+                                row.Index, yname
+                            ] = previous_body_keypoints_df.loc[
+                                row.Index, yname
+                            ]
+                            body_keypoints_df.loc[
+                                row.Index, cname
+                            ] = previous_body_keypoints_df.loc[
+                                row.Index, cname
+                            ]
 
         if parts:
             part_names = [x.value for x in parts]

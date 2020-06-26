@@ -16,22 +16,43 @@ class Visualizer:
 
     LINE_PATHS = [
         [OpenPoseParts.NOSE, OpenPoseParts.NECK, OpenPoseParts.MID_HIP],
-        [OpenPoseParts.L_EAR, OpenPoseParts.L_EYE, OpenPoseParts.NOSE,
-            OpenPoseParts.R_EYE, OpenPoseParts.R_EAR],
-        [OpenPoseParts.NECK, OpenPoseParts.L_SHOULDER, OpenPoseParts.L_ELBOW,
-            OpenPoseParts.L_WRIST],
-        [OpenPoseParts.NECK, OpenPoseParts.R_SHOULDER, OpenPoseParts.R_ELBOW,
-            OpenPoseParts.R_WRIST],
+        [
+            OpenPoseParts.L_EAR,
+            OpenPoseParts.L_EYE,
+            OpenPoseParts.NOSE,
+            OpenPoseParts.R_EYE,
+            OpenPoseParts.R_EAR,
+        ],
+        [
+            OpenPoseParts.NECK,
+            OpenPoseParts.L_SHOULDER,
+            OpenPoseParts.L_ELBOW,
+            OpenPoseParts.L_WRIST,
+        ],
+        [
+            OpenPoseParts.NECK,
+            OpenPoseParts.R_SHOULDER,
+            OpenPoseParts.R_ELBOW,
+            OpenPoseParts.R_WRIST,
+        ],
         [OpenPoseParts.L_HIP, OpenPoseParts.MID_HIP, OpenPoseParts.R_HIP],
-        [OpenPoseParts.L_HIP, OpenPoseParts.L_KNEE, OpenPoseParts.L_ANKLE,
-            OpenPoseParts.L_BIG_TOE],
-        [OpenPoseParts.R_HIP, OpenPoseParts.R_KNEE, OpenPoseParts.R_ANKLE,
-            OpenPoseParts.R_BIG_TOE],
+        [
+            OpenPoseParts.L_HIP,
+            OpenPoseParts.L_KNEE,
+            OpenPoseParts.L_ANKLE,
+            OpenPoseParts.L_BIG_TOE,
+        ],
+        [
+            OpenPoseParts.R_HIP,
+            OpenPoseParts.R_KNEE,
+            OpenPoseParts.R_ANKLE,
+            OpenPoseParts.R_BIG_TOE,
+        ],
         [OpenPoseParts.L_ANKLE, OpenPoseParts.L_SMALL_TOE],
-        [OpenPoseParts.R_ANKLE, OpenPoseParts.R_SMALL_TOE]
+        [OpenPoseParts.R_ANKLE, OpenPoseParts.R_SMALL_TOE],
     ]
 
-    def __init__(self, output_directory=''):
+    def __init__(self, output_directory=""):
         """Initializes a Visualizer instance with a set of parts to display and
         an output directory.
 
@@ -66,15 +87,15 @@ class Visualizer:
         None
 
         """
-        n_people = len(pt_df. columns) // 3
+        n_people = len(pt_df.columns) // 3
         for index, row in pt_df.iterrows():
             for i in range(n_people):
-                pos = (int(row[i*3]), int(row[i*3+1]))
+                pos = (int(row[i * 3]), int(row[i * 3 + 1]))
 
                 color = Visualizer.MID_COLOR
-                if row.name.startswith('R'):
+                if row.name.startswith("R"):
                     color = Visualizer.R_COLOR
-                elif row.name.startswith('L'):
+                elif row.name.startswith("L"):
                     color = Visualizer.L_COLOR
 
                 if pos[0] > 0 or pos[1] > 0:
@@ -112,7 +133,7 @@ class Visualizer:
                 for part in line:
                     if part.value in pt_df.index:
                         part_index = pt_df.index.get_loc(part.value)
-                        row = pt_df.iloc[part_index, i*3:i*3+2]
+                        row = pt_df.iloc[part_index, i * 3 : i * 3 + 2]
                         pt = np.int32(row.values)
                         if pt[0] > 0 and pt[1] > 0:
                             pts[count] = pt
@@ -124,8 +145,13 @@ class Visualizer:
 
                 for key, img in imgs.items():
                     if img is not None:
-                        cv2.polylines(img, [pts], False,
-                                      Visualizer.LINE_COLOR, thickness=2)
+                        cv2.polylines(
+                            img,
+                            [pts],
+                            False,
+                            Visualizer.LINE_COLOR,
+                            thickness=2,
+                        )
 
     def get_paths_from_dataframe(df):
         paths = []
@@ -140,10 +166,16 @@ class Visualizer:
 
         return paths
 
-    def create_videos_from_dataframes(self, file_basename,
-                                      body_keypoints_dfs, width, height,
-                                      create_blank=True, create_overlay=False,
-                                      video_to_overlay=None):
+    def create_videos_from_dataframes(
+        self,
+        file_basename,
+        body_keypoints_dfs,
+        width,
+        height,
+        create_blank=True,
+        create_overlay=False,
+        video_to_overlay=None,
+    ):
         """Creates a video visualising the provided array of body keypoints.
         The lines to draw will be determined by the parts in the first
         dataframe.
@@ -177,8 +209,10 @@ class Visualizer:
         cap = None
         if create_overlay:
             if not video_to_overlay:
-                raise ValueError("You must provide video_to_overlay "
-                                 "if create_overlay is True")
+                raise ValueError(
+                    "You must provide video_to_overlay "
+                    "if create_overlay is True"
+                )
 
             if not os.path.exists(video_to_overlay):
                 raise ValueError("video_to_overlay is not a valid file")
@@ -188,19 +222,21 @@ class Visualizer:
         paths = Visualizer.get_paths_from_dataframe(body_keypoints_dfs[0])
 
         # Draw the data from the DataFrame
-        img_arrays = {'blank': [], 'overlay': []}
+        img_arrays = {"blank": [], "overlay": []}
         for df in body_keypoints_dfs:
-            imgs = {'blank': None, 'overlay': None}
+            imgs = {"blank": None, "overlay": None}
 
             if create_blank:
-                imgs['blank'] = np.ones((height, width, 3), np.uint8)
+                imgs["blank"] = np.ones((height, width, 3), np.uint8)
 
             if create_overlay:
                 ret, frame = cap.read()
                 if not ret:
-                    raise ValueError("Not enough frames in overlay video to "
-                                     "match data frame")
-                imgs['overlay'] = frame
+                    raise ValueError(
+                        "Not enough frames in overlay video to "
+                        "match data frame"
+                    )
+                imgs["overlay"] = frame
 
             self.draw_lines(imgs, df, paths)
             self.draw_points(imgs, df)
@@ -214,12 +250,11 @@ class Visualizer:
 
         for key, img_array in img_arrays.items():
             if len(img_array):
-                fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-                filename = os.path.join(self.output_directory,
-                                        "%s_%s.avi" % (file_basename, key))
-                out = cv2.VideoWriter(filename,
-                                      fourcc, 25,
-                                      (width, height))
+                fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+                filename = os.path.join(
+                    self.output_directory, "%s_%s.avi" % (file_basename, key)
+                )
+                out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
                 for i in range(len(img_array)):
                     out.write(img_array[i])
 
