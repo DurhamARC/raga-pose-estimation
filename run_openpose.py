@@ -126,15 +126,19 @@ def run_openpose(
     input_json=None,
     create_model_video=False,
     create_overlay_video=False,
-    width=None,
-    height=None,
+    width=0,
+    height=0,
     confidence_threshold=0,
     body_parts=None,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
     Non-click version to work from jupyter notebooks."""
-    if not os.path.isdir(output_dir):
-        print(f"No such directory {output_dir}.")
+    # Check output directory
+    output_dir = os.path.abspath(output_dir)
+    if os.path.isdir(output_dir) and os.listdir(output_dir):
+        print(
+            f"Directory {output_dir} exists and is not empty, so files would be overridden."
+        )
         exit(1)
 
     # Check input values
@@ -167,27 +171,36 @@ def run_openpose(
         )
         exit(1)
 
-    # Get full path to output directory
-    output_dir = os.path.abspath(output_dir)
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
 
     # Run openpose if necessary
     if input_json:
         path_to_json = os.path.abspath(input_json)
+        if not os.path.exists(path_to_json):
+            print(f"Invalid input_json path {path_to_json}.")
+            exit(1)
     else:
         print(f"Detecting poses on {input_video}.")
 
         # Run openpose over the video
         openpose_dir = os.path.abspath(openpose_dir)
+        if not os.path.exists(openpose_dir):
+            print(f"Invalid openpose path {openpose_dir}.")
+            exit(1)
 
         # Calling out to the binary seems to be quicker than the python wrapper
         input_video = os.path.realpath(input_video)
         path_to_json = os.path.join(output_dir, "json")
-        os.system(
+        result = os.system(
             f"cd {openpose_dir} && "
             "./build/examples/openpose/openpose.bin "
             f"--video {input_video} "
             f"--write_json {path_to_json} --display 0 --render-pose 0"
         )
+        if result != 0:
+            print(f"Unable to run openpose from {openpose_dir}.")
+            exit(1)
 
     # Get list of json files
     json_files = [
@@ -197,7 +210,7 @@ def run_openpose(
     ]
 
     if len(json_files) == 0:
-        print(f"No json files found in {path_to_json}. Exiting.")
+        print(f"No json files found in {path_to_json}.")
         exit(1)
 
     # Get array for dataframes
