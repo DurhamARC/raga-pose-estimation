@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class CSVWriter:
-    def writeCSV(dataframes, output_dir):
+    def writeCSV(dataframes, output_dir, flatten=False):
         n_people = n_people = len(dataframes[0].columns) // 3
 
         for i in range(n_people):
@@ -33,6 +33,11 @@ class CSVWriter:
                 },
                 level="Variable",
             )
+
+            if flatten:
+                all_dfs.columns = [
+                    "_".join(col).strip() for col in all_dfs.columns.values
+                ]
 
             # Output to CSV
             all_dfs.to_csv(os.path.join(output_dir, f"person{i}.csv"))

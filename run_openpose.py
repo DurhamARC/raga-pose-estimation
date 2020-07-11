@@ -76,6 +76,12 @@ from entimement_openpose.visualizer import Visualizer
 @click.option(
     "--upper-body-parts", "bodypartsgroup", flag_value="upper", default=True
 )
+@click.option(
+    "--flatten",
+    "flatten",
+    default=False,
+    help="Export CSV in flattened format, i.e. with a single header row (see README)",
+)
 @click.option("--lower-body-parts", "bodypartsgroup", flag_value="lower")
 def openpose_cli(
     output_dir,
@@ -89,10 +95,12 @@ def openpose_cli(
     confidence_threshold,
     body_parts,
     bodypartsgroup,
+    flatten,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
        files."""
 
+    body_parts_list = None
     if body_parts:
         try:
             body_parts_list = [
@@ -100,6 +108,7 @@ def openpose_cli(
             ]
         except ValueError as e:
             click.echo(f"Invalid body-parts value {body_parts}: {e}")
+            exit(1)
     elif bodypartsgroup == "upper":
         body_parts_list = OpenPosePartGroups.UPPER_BODY_PARTS
     elif bodypartsgroup == "lower":
@@ -116,6 +125,7 @@ def openpose_cli(
         height,
         confidence_threshold,
         body_parts_list,
+        flatten,
     )
 
 
@@ -130,6 +140,7 @@ def run_openpose(
     height=0,
     confidence_threshold=0,
     body_parts=None,
+    flatten=False,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
     Non-click version to work from jupyter notebooks."""
@@ -258,7 +269,7 @@ def run_openpose(
         )
 
     print(f"Saving CSVs to {output_dir}.")
-    CSVWriter.writeCSV(body_keypoints_dfs, output_dir)
+    CSVWriter.writeCSV(body_keypoints_dfs, output_dir, flatten=flatten)
 
 
 if __name__ == "__main__":
