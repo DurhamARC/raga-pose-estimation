@@ -74,7 +74,16 @@ from entimement_openpose.visualizer import Visualizer
     "--lower-body-parts.",
 )
 @click.option(
-    "--upper-body-parts", "bodypartsgroup", flag_value="upper", default=True
+    "--upper-body-parts",
+    "bodypartsgroup",
+    flag_value="upper",
+    help="Output upper body parts only",
+)
+@click.option(
+    "--lower-body-parts",
+    "bodypartsgroup",
+    flag_value="lower",
+    help="Output lower body parts only",
 )
 @click.option(
     "--flatten",
@@ -82,7 +91,6 @@ from entimement_openpose.visualizer import Visualizer
     default=False,
     help="Export CSV in flattened format, i.e. with a single header row (see README)",
 )
-@click.option("--lower-body-parts", "bodypartsgroup", flag_value="lower")
 def openpose_cli(
     output_dir,
     openpose_dir,
@@ -98,8 +106,7 @@ def openpose_cli(
     flatten,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
-       files."""
-
+       files. See cli docs for parameter details."""
     body_parts_list = None
     if body_parts:
         try:
@@ -143,7 +150,44 @@ def run_openpose(
     flatten=False,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
-    Non-click version to work from jupyter notebooks."""
+    Non-click version to work from jupyter notebooks.
+
+    Parameters
+    ----------
+    output_dir : str
+        Path to the directory in which to output CSV
+        files (and videos if required).
+    openpose_dir : str
+        Path to the directory in which openpose is
+        installed.
+    input_video : str
+        Path to the video file on which to run
+        openpose.
+    input_json : str
+        Path to a directory of previously generated
+        openpose json files.
+    create_model_video : bool
+        Whether to create a video showing the poses on
+        a blank background.
+    create_overlay_video : type
+        Whether to create a video showing the poses as
+        an overlay.
+    width : int
+        Width of original video (mandatory for
+        creating video if not providing input_video).
+    height : int
+        Height of original video (mandatory for
+        creating video if not providing input_video).
+    confidence_threshold : float
+        Confidence threshold. Items with a confidence
+        lower than the threshold will be replaced by
+        values from a previous frame.
+    body_parts : list of OpenPoseParts
+        Body parts to include in output.
+    flatten : type
+        Export CSV in flattened format, i.e. with a
+        single header row (see README).
+    """
     # Check output directory
     output_dir = os.path.abspath(output_dir)
     if os.path.isdir(output_dir) and os.listdir(output_dir):

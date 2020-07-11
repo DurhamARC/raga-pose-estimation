@@ -4,6 +4,20 @@ import pandas as pd
 
 class CSVWriter:
     def writeCSV(dataframes, output_dir, flatten=False):
+        """Creates CSVs in the given output directory. Each CSV contains
+        details for 1 person, with columns for x, y, c for each body parts and
+        rows representing each frame.
+
+        Parameters
+        ----------
+        dataframes : list of DataFrame
+            List of DataFrames as produced by OpenPoseJsonParser.
+        output_dir : str
+            Directory in which to output CSV files.
+        flatten : bool
+            Whether to flatten the CSV multi-line headers to a single row
+            (see README)
+        """
         n_people = n_people = len(dataframes[0].columns) // 3
 
         for i in range(n_people):
