@@ -12,7 +12,7 @@ class Smoother:
     Parameters
     ----------
     smoothing window: int
-        length of smoothing window
+        length of smoothing window, has to be odd
     
     polyorder: int
        order of the polynomial used in fitting function, has to be smaller than the smoothing window
@@ -44,37 +44,22 @@ class Smoother:
         List of smoothed data frames
         """
         
-        # Go through all frames (have to be sorted)
-        # TODO: Do we assume it is already sorted or sort it here?	
-        # Das Beispiel hatte alle keypoints in einem Dataframe (mit nur einer Person), und dann pro Keypointart (was wohl eine Liste gibt) geglaettet. Wir haben eine Liste von Dataframes, potentiell mit mehrern Personen. Wir machen wir das da am Schlauesten...?
-        big_body_keypoints_df = pd.concat(body_keypoints_dfs)  
+        # Concatenate to one big dataframe all frames (assuming they are sorted wrt to person-order)
+        big_body_keypoints_df = pd.concat(body_keypoints_dfs)
+        num_frames = len(body_keypoints_dfs)  
         num_people = int(len(big_body_keypoints_df.columns)/3)
-       
-        big_body_keypoints_df.index.name='bodyparts'
-        
-        #big_body_keypoints_df = big_body_keypoints_df.groupby('bodyparts')#.apply(list)
-        
-        big_body_keypoints_df = big_body_keypoints_df.transpose()
-        
-        big_body_keypoints_df = pd.DataFrame({i: big_body_keypoints_df[i].values.T.ravel() for i in set(big_body_keypoints_df.columns)})
-        
+        num_bodyparts = len(body_keypoints_dfs[0]) # assuming that we have the same number of bodyparts in each frame
+
+
         print(big_body_keypoints_df)
+        #big_body_keypoints_df = pd.DataFrame({i: big_body_keypoints_df[i].values.T.ravel() for i in set(big_body_keypoints_df.columns)})
         
-        big_body_keypoints_df = pd.DataFrame(signal.savgol_filter(big_body_keypoints_df, self.smoothing_window, self.polyorder, axis=0), columns = big_body_keypoints_df.columns, index = big_body_keypoints_df.index)
-        
-        print(big_body_keypoints_df)
+        # I am sure there is a more phytonic way to do this, but I'll go for the loop now
+        for this_bodypart in range(num_bodyparts): 
+            keypoints_series = big_body_keypoints_df.loc[big_body_keypoints_df.index[this_bodypart]]
+            keypoints_series_smoothed = signal.savgol_filter(keypoints_series, self.smoothing_window, self.polyorder, axis = 0)
+            big_body_keypoints_df.loc[big_body_keypoints_df.index[this_bodypart]] = keypoints_series_smoothed
                
+        print(big_body_keypoints_df)
         
-        
-        # Go through all persons and keypoints
-        #for p in range(num_people):
-        #    for i in range
-            #cname = "confidence" + str(p)
-            #xname = "x" + str(p)
-            #yname = "y" + str(p)
-            #big_body_keypoints_df_x = big_body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].groupby(xname)
-            #print(big_body_keypoints_df_x.loc[xname])
-        #print(signal.savgol_filter(big_body_keypoints_df, self.smoothing_window, self.polyorder))
-            #body_keypoints_dfs[yname, i] = signal.savgol_filter(body_keypoints_dfs[yname], self.smoothing_window, self.polyorder)
-    	
         return body_keypoints_dfs
