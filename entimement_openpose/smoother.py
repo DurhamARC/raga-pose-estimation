@@ -50,9 +50,7 @@ class Smoother:
         num_people = int(len(big_body_keypoints_df.columns)/3)
         num_bodyparts = len(body_keypoints_dfs[0]) # assuming that we have the same number of bodyparts in each frame
 
-
         print(big_body_keypoints_df)
-        #big_body_keypoints_df = pd.DataFrame({i: big_body_keypoints_df[i].values.T.ravel() for i in set(big_body_keypoints_df.columns)})
         
         # I am sure there is a more phytonic way to do this, but I'll go for the loop now
         for this_bodypart in range(num_bodyparts): 
