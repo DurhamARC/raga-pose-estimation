@@ -235,8 +235,10 @@ def run_openpose(
         if not os.path.exists(path_to_json):
             print(f"Invalid input_json path {path_to_json}.")
             exit(1)
+        else:
+            print(f"Processing JSON from {path_to_json}...")
     else:
-        print(f"Detecting poses on {input_video}.")
+        print(f"Detecting poses on {input_video}...")
 
         # Run openpose over the video
         openpose_dir = os.path.abspath(openpose_dir)
@@ -289,10 +291,10 @@ def run_openpose(
         previous_body_keypoints_df = body_keypoints_df
 
     if create_model_video:
-        print("Creating model video")
+        print("Creating model video...")
 
     if create_overlay_video:
-        print("Creating overlay video")
+        print("Creating overlay video...")
 
     if create_model_video or create_overlay_video:
         if not width or not height:
@@ -312,8 +314,9 @@ def run_openpose(
             video_to_overlay=input_video,
         )
 
-    print(f"Saving CSVs to {output_dir}.")
+    print(f"Saving CSVs to {output_dir}...")
     CSVWriter.writeCSV(body_keypoints_dfs, output_dir, flatten=flatten)
+    print("Done.")
 
 
 if __name__ == "__main__":
