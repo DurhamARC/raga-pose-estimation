@@ -249,12 +249,20 @@ def run_openpose(
         # Calling out to the binary seems to be quicker than the python wrapper
         input_video = os.path.realpath(input_video)
         path_to_json = os.path.join(output_dir, "json")
-        result = os.system(
+        cmd = (
             f"cd {openpose_dir} && "
             "./build/examples/openpose/openpose.bin "
             f"--video {input_video} "
             f"--write_json {path_to_json} --display 0 --render-pose 0"
         )
+        try:
+            # If running in Colab, need to use ipython's system call
+            ip = get_ipython()
+            result = ip.system(cmd)
+        except NameError:
+            # Otherwise (if get_ipython doesn't exist) we can just use os.system
+            result = os.system(cmd)
+
         if result != 0:
             print(f"Unable to run openpose from {openpose_dir}.")
             exit(1)
