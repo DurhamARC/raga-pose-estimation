@@ -209,7 +209,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"Detecting poses on example_files/example_3people/short_video.mp4.\n"
+        == f"Detecting poses on example_files/example_3people/short_video.mp4...\n"
         f"Invalid openpose path {invalid_path}.\n"
     )
 
@@ -225,7 +225,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"Detecting poses on example_files/example_3people/short_video.mp4.\n"
+        == f"Detecting poses on example_files/example_3people/short_video.mp4...\n"
         f"Unable to run openpose from {example_path}.\n"
     )
 
@@ -234,7 +234,10 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
         run_openpose.run_openpose(output_path, input_json=output_path)
 
     captured = capsys.readouterr()
-    assert captured.out == f"No json files found in {output_path}.\n"
+    assert (
+        captured.out == f"Processing JSON from {output_path}...\n"
+        f"No json files found in {output_path}.\n"
+    )
 
 
 def test_openpose_cli_part_group(output_path):
