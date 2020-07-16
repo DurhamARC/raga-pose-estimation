@@ -13,10 +13,10 @@ class Smoother:
     Parameters
     ----------
     smoothing window: int
-        length of smoothing window, has to be odd
+        length of smoothing window, has to be odd (the higher the more frames are taken into account for smoothing; between 11 and 33 or so seems to work well, if it's too big it will affect/delay genuine movements)
     
     polyorder: int
-       order of the polynomial used in fitting function, has to be smaller than the smoothing window
+       order of the polynomial used in fitting function, has to be smaller than the smoothing window (2 seems to work well, 1 connects with straight lines, etc.)
 
     Attributes
     ----------
@@ -53,7 +53,7 @@ class Smoother:
             body_keypoints_dfs[0]
         )  # assuming that we have the same number of bodyparts in each frame
 
-        # I am sure there is a more phytonic way to do this, but I'll go for the loops now
+        # I am sure there is a more pythonic way to do this, but I'll go for the loops now
         for this_bodypart in range(num_bodyparts):
             keypoints_series = big_body_keypoints_df.loc[
                 big_body_keypoints_df.index[this_bodypart]
@@ -67,7 +67,7 @@ class Smoother:
 
         for i in range(num_frames):
             body_keypoints_dfs[i] = big_body_keypoints_df.iloc[
-                i * num_bodyparts : (i + 1) * num_bodyparts - 1
+                i * num_bodyparts : (i + 1) * num_bodyparts
             ]
 
         return body_keypoints_dfs
