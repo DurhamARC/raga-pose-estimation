@@ -46,7 +46,7 @@ for file in json_files:
     previous_body_keypoints_df = body_keypoints_df
 
 
-smoother = Smoother(13, 2)
+smoother = Smoother(23, 2)
 body_keypoints_dfs = smoother.smooth(body_keypoints_dfs)
 
 visualizer = Visualizer(output_directory="output")

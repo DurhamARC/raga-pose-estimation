@@ -50,14 +50,15 @@ class Smoother:
         num_people = int(len(big_body_keypoints_df.columns)/3)
         num_bodyparts = len(body_keypoints_dfs[0]) # assuming that we have the same number of bodyparts in each frame
 
-        print(big_body_keypoints_df)
         
-        # I am sure there is a more phytonic way to do this, but I'll go for the loop now
+        # I am sure there is a more phytonic way to do this, but I'll go for the loops now
         for this_bodypart in range(num_bodyparts): 
             keypoints_series = big_body_keypoints_df.loc[big_body_keypoints_df.index[this_bodypart]]
             keypoints_series_smoothed = signal.savgol_filter(keypoints_series, self.smoothing_window, self.polyorder, axis = 0)
             big_body_keypoints_df.loc[big_body_keypoints_df.index[this_bodypart]] = keypoints_series_smoothed
                
-        print(big_body_keypoints_df)
+        
+        for i in range(num_frames):
+            body_keypoints_dfs[i] = big_body_keypoints_df.iloc[i*num_bodyparts:(i+1)*num_bodyparts-1] 
         
         return body_keypoints_dfs
