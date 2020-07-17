@@ -37,7 +37,7 @@ class Smoother:
      	
         Parameters
         ----------
-        body_keypoints_dfs: list of data frames with keypoints
+        body_keypoints_dfs: list of data frames with keypoints, have to be in consistent person order (call sort_persons_by_x_position beforehand for multiple persons) 
     	
         Returns
         -------
