@@ -5,6 +5,7 @@ channels:
 dependencies:
   - pandas
   - numpy
+  - scipy
   - python=3.7
   - opencv
   - pytest
