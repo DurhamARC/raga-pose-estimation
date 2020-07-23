@@ -6,6 +6,8 @@ from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import OpenPosePartGroups
 from entimement_openpose.visualizer import Visualizer
 
+from entimement_openpose.smoother import Smoother
+
 # Create a video from JSON point data
 
 # video file
@@ -43,6 +45,9 @@ for file in json_files:
     body_keypoints_dfs.append(body_keypoints_df)
     previous_body_keypoints_df = body_keypoints_df
 
+
+smoother = Smoother(23, 2)
+body_keypoints_dfs = smoother.smooth(body_keypoints_dfs)
 
 visualizer = Visualizer(output_directory="output")
 visualizer.create_videos_from_dataframes(
