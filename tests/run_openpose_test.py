@@ -34,6 +34,7 @@ def test_run_openpose(output_path):
             OpenPoseParts.NOSE,
             OpenPoseParts.R_EYE,
         ],
+        smoothing_parameters=(21, 2),
     )
 
     # Check video files have been created and are about the size we expect
@@ -65,12 +66,12 @@ def test_run_openpose(output_path):
             if f == csv_files[0]:
                 assert (
                     data[2]
-                    == "0,221.44,291.929,0.884024,218.301,306.0,0.946648,201.026,295.007,0.907743\n"
+                    == "0,221.44146414455102,292.440453416149,0.8857431581027666,218.28011123658945,306.0235025409372,0.9471599440993789,199.7932987012986,295.00722473178996,0.9084977961603613\n"
                 )
             else:
                 assert (
                     data[2]
-                    == "0,495.607,307.671,0.911183,483.048,323.228,0.884607,470.521,307.588,0.932604\n"
+                    == "0,498.14364709203846,307.6110999435347,0.9068777549407112,485.10291360813085,324.6441072840203,0.8720559299830601,472.19120440429117,307.94809147374355,0.9198539649915302\n"
                 )
 
         # Check we can read the CSV back into a DataFrame of the expected shape

@@ -9,6 +9,7 @@ from entimement_openpose.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
 )
+from entimement_openpose.smoother import Smoother
 from entimement_openpose.visualizer import Visualizer
 
 
@@ -65,6 +66,13 @@ from entimement_openpose.visualizer import Visualizer
     "the threshold will be replaced by values from a previous frame.",
 )
 @click.option(
+    "--smoothing-parameters",
+    default=(None, None),
+    type=(int, int),
+    help="Window and polynomial order for smoother. See README for "
+    "details.",
+)
+@click.option(
     "--body-parts",
     default=None,
     help="Body parts to include in output. Should be a "
@@ -101,6 +109,7 @@ def openpose_cli(
     width,
     height,
     confidence_threshold,
+    smoothing_parameters,
     body_parts,
     bodypartsgroup,
     flatten,
@@ -121,6 +130,9 @@ def openpose_cli(
     elif bodypartsgroup == "lower":
         body_parts_list = OpenPosePartGroups.LOWER_BODY_PARTS
 
+    if smoothing_parameters == (None, None):
+        smoothing_parameters = None
+
     run_openpose(
         output_dir,
         openpose_dir,
@@ -131,6 +143,7 @@ def openpose_cli(
         width,
         height,
         confidence_threshold,
+        smoothing_parameters,
         body_parts_list,
         flatten,
     )
@@ -146,6 +159,7 @@ def run_openpose(
     width=0,
     height=0,
     confidence_threshold=0,
+    smoothing_parameters=None,
     body_parts=None,
     flatten=False,
 ):
@@ -182,6 +196,10 @@ def run_openpose(
         Confidence threshold. Items with a confidence
         lower than the threshold will be replaced by
         values from a previous frame.
+    smoothing_parameters : (int, int)
+        Pair of parameters (smoothing_window, polyorder)
+        defining the smoothing function applied. If None,
+        no smoothing is attempted. See README.
     body_parts : list of OpenPoseParts
         Body parts to include in output.
     flatten : type
@@ -297,6 +315,11 @@ def run_openpose(
         body_keypoints_df.reset_index()
         body_keypoints_dfs.append(body_keypoints_df)
         previous_body_keypoints_df = body_keypoints_df
+
+    if smoothing_parameters:
+        print("Smoothing output...")
+        smoother = Smoother(*smoothing_parameters)
+        body_keypoints_dfs = smoother.smooth(body_keypoints_dfs)
 
     if create_model_video:
         print("Creating model video...")
