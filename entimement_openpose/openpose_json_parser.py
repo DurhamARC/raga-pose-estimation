@@ -55,16 +55,16 @@ class OpenPoseJsonParser:
         ----------
         person_index : int
             Index of person in file for which to get keypoints
-           
+
         parts : array of OpenPoseParts
             Array of parts to include in returned dataframe. Defaults to None,
             which shows all parts.
-            
-        confidence_threshold: float threshold in [0, 1] for confidence 
-            Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
-            
+
+        confidence_threshold: float threshold in [0, 1] for confidence
+            Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.
+
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is None.                 
+            Default is None.
 
         Returns
         -------
@@ -78,22 +78,20 @@ class OpenPoseJsonParser:
 
     def sort_persons_by_x_position(self, body_keypoints_df):
         """Sort the data so that the left-most person has index 0, the next has index 1, etc.
-    	
-    	Parameters
-	----------
-	body_keypoints_df: data frame that is to be sorted.
-	
-	Returns
-	-------
-    	sorted_body_keypoints_df
-    	    Sorted DataFrame.
-    	"""
+
+        Parameters
+        ----------
+        body_keypoints_df: data frame that is to be sorted.
+
+        Returns
+        -------
+        sorted_body_keypoints_df
+            Sorted DataFrame.
+        """
         sorted_body_keypoints_df = pd.DataFrame()
 
         # Find permutation to sort x values in ascending order
-        idx = np.argsort(
-            body_keypoints_df.loc[OpenPoseParts.MID_HIP.value].iloc[0::3]
-        )
+        idx = np.argsort(body_keypoints_df.mean(axis=0).iloc[0::3])
 
         # Test whether permutation equals just the numbering (1, 2, 3, ...), i.e. whether x values are already sorted.
         if list(range(len(idx))) == list(idx):
@@ -156,12 +154,12 @@ class OpenPoseJsonParser:
         parts : array of OpenPoseParts
             Array of parts to include in returned dataframe. Defaults to None,
             which shows all parts.
-            
-        confidence_threshold: float threshold in [0, 1] for confidence 
-            Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.    
-            
+
+        confidence_threshold: float threshold in [0, 1] for confidence
+            Any keypoint candidate with lower confidence will be replaced by previous keypoint if that has a higher confidence. Default is an empty dataframe.
+
         previous_body_keypoints_df: data frame of previous frame in video, if existent.
-            Default is None.             
+            Default is None.
 
         Returns
         -------

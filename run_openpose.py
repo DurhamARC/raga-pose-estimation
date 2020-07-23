@@ -337,6 +337,9 @@ def run_openpose(
             confidence_threshold,
             previous_body_keypoints_df,
         )
+        body_keypoints_df = parser.sort_persons_by_x_position(
+            body_keypoints_df
+        )
         body_keypoints_df.reset_index()
         body_keypoints_dfs.append(body_keypoints_df)
         previous_body_keypoints_df = body_keypoints_df
