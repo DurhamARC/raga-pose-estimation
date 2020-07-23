@@ -15,26 +15,37 @@ from entimement_openpose.visualizer import Visualizer
 
 @click.command()
 @click.option(
+    "-v",
     "--input-video",
     default=None,
     help="Path to the video file on which to run openpose",
 )
 @click.option(
+    "-j",
     "--input-json",
     default=None,
-    help="Path to a directory of previously generated openpose " "json files",
+    help="Path to a directory of previously generated openpose json files",
 )
 @click.option(
+    "-o",
     "--output-dir",
     prompt="Output directory",
     help="Path to the directory in which to output CSV files (and "
     "videos if required).",
 )
 @click.option(
+    "-n",
+    "--number-of-people",
+    default=1,
+    help="Number of people to include in output.",
+)
+@click.option(
+    "-O",
     "--openpose-dir",
     help="Path to the directory in which openpose is installed.",
 )
 @click.option(
+    "-m",
     "--create-model-video",
     is_flag=True,
     default=False,
@@ -42,30 +53,35 @@ from entimement_openpose.visualizer import Visualizer
     "background",
 )
 @click.option(
+    "-V",
     "--create-overlay-video",
     is_flag=True,
     default=False,
-    help="Whether to create a video showing the poses as an overlay",
+    help="Whether to create a video showing the poses as an oVerlay",
 )
 @click.option(
+    "-w",
     "--width",
     default=0,
     help="Width of original video (mandatory for creating video if "
     " not providing input-video)",
 )
 @click.option(
+    "-h",
     "--height",
     default=0,
     help="Height of original video (mandatory for creating video if "
     " not providing input-video)",
 )
 @click.option(
+    "-c",
     "--confidence-threshold",
     default=0.0,
     help="Confidence threshold. Items with a confidence lower than "
     "the threshold will be replaced by values from a previous frame.",
 )
 @click.option(
+    "-s",
     "--smoothing-parameters",
     default=(None, None),
     type=(int, int),
@@ -73,6 +89,7 @@ from entimement_openpose.visualizer import Visualizer
     "details.",
 )
 @click.option(
+    "-b",
     "--body-parts",
     default=None,
     help="Body parts to include in output. Should be a "
@@ -82,18 +99,21 @@ from entimement_openpose.visualizer import Visualizer
     "--lower-body-parts.",
 )
 @click.option(
+    "-u",
     "--upper-body-parts",
     "bodypartsgroup",
     flag_value="upper",
     help="Output upper body parts only",
 )
 @click.option(
+    "-l",
     "--lower-body-parts",
     "bodypartsgroup",
     flag_value="lower",
     help="Output lower body parts only",
 )
 @click.option(
+    "-f",
     "--flatten",
     "flatten",
     default=False,
@@ -104,6 +124,7 @@ def openpose_cli(
     openpose_dir,
     input_video,
     input_json,
+    number_of_people,
     create_model_video,
     create_overlay_video,
     width,
@@ -138,6 +159,7 @@ def openpose_cli(
         openpose_dir,
         input_video,
         input_json,
+        number_of_people,
         create_model_video,
         create_overlay_video,
         width,
@@ -154,6 +176,7 @@ def run_openpose(
     openpose_dir=None,
     input_video=None,
     input_json=None,
+    number_of_people=1,
     create_model_video=False,
     create_overlay_video=False,
     width=0,
@@ -180,6 +203,8 @@ def run_openpose(
     input_json : str
         Path to a directory of previously generated
         openpose json files.
+    number_of_people : int
+        Number of people for which to output results.
     create_model_video : bool
         Whether to create a video showing the poses on
         a blank background.
@@ -307,7 +332,7 @@ def run_openpose(
     for file in json_files:
         parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
         body_keypoints_df = parser.get_multiple_keypoints(
-            [0, 1],
+            list(range(number_of_people)),
             body_parts,
             confidence_threshold,
             previous_body_keypoints_df,

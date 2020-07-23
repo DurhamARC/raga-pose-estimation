@@ -34,54 +34,59 @@ $ python run_openpose.py --help
 Usage: run_openpose.py [OPTIONS]
 
   Runs openpose on the video, does post-processing, and outputs CSV files.
+  See cli docs for parameter details.
 
 Options:
-  --input-video TEXT            Path to the video file on which to run
-                                openpose
+  -v, --input-video TEXT          Path to the video file on which to run
+                                  openpose
 
-  --input-json TEXT             Path to a directory of previously generated
-                                openpose json files
+  -j, --input-json TEXT           Path to a directory of previously generated
+                                  openpose json files
 
-  --output-dir TEXT             Path to the directory in which to output CSV
-                                files (and videos if required).
+  -o, --output-dir TEXT           Path to the directory in which to output CSV
+                                  files (and videos if required).
 
-  --openpose-dir TEXT           Path to the directory in which openpose is
-                                installed.
+  -n, --number-of-people INTEGER  Number of people to include in output.
+  -O, --openpose-dir TEXT         Path to the directory in which openpose is
+                                  installed.
 
-  --create-model-video          Whether to create a video showing the poses on
-                                a blank background
+  -m, --create-model-video        Whether to create a video showing the poses
+                                  on a blank background
 
-  --create-overlay-video        Whether to create a video showing the poses as
-                                an overlay
+  -V, --create-overlay-video      Whether to create a video showing the poses
+                                  as an oVerlay
 
-  --width INTEGER               Width of original video (mandatory for
-                                creating video if  not providing input-video)
+  -w, --width INTEGER             Width of original video (mandatory for
+                                  creating video if  not providing input-
+                                  video)
 
-  --height INTEGER              Height of original video (mandatory for
-                                creating video if  not providing input-video)
+  -h, --height INTEGER            Height of original video (mandatory for
+                                  creating video if  not providing input-
+                                  video)
 
-  --confidence-threshold FLOAT  Confidence threshold. Items with a confidence
-                                lower than the threshold will be replaced by
-                                values from a previous frame.
+  -c, --confidence-threshold FLOAT
+                                  Confidence threshold. Items with a
+                                  confidence lower than the threshold will be
+                                  replaced by values from a previous frame.
 
-  --smoothing-parameters <INTEGER INTEGER>...
-                                Window and polynomial order for smoother.
-                                See README for details.
+  -s, --smoothing-parameters <INTEGER INTEGER>...
+                                  Window and polynomial order for smoother.
+                                  See README for details.
 
-  --body-parts TEXT             Body parts to include in output. Should be a
-                                comma-separated list of strings as in the list
-                                at https://github.com/CMU-Perceptual-
-                                Computing-Lab/openpose/blob/master/doc/output.
-                                md#keypoint-ordering-in-cpython, e.g.
-                                "LEye,RElbow". Overrides --upper-body-parts
-                                and --lower-body-parts.
+  -b, --body-parts TEXT           Body parts to include in output. Should be a
+                                  comma-separated list of strings as in the
+                                  list at https://github.com/CMU-Perceptual-
+                                  Computing-Lab/openpose/blob/master/doc/outpu
+                                  t.md#keypoint-ordering-in-cpython, e.g.
+                                  "LEye,RElbow". Overrides --upper-body-parts
+                                  and --lower-body-parts.
 
-  --upper-body-parts            Output upper body parts only
-  --lower-body-parts            Output lower body parts only
-  --flatten TEXT                Export CSV in flattened format, i.e. with a
-                                single header row (see README)
+  -u, --upper-body-parts          Output upper body parts only
+  -l, --lower-body-parts          Output lower body parts only
+  -f, --flatten TEXT              Export CSV in flattened format, i.e. with a
+                                  single header row (see README)
 
-  --help                        Show this message and exit.
+  --help                          Show this message and exit.
 ```
 
 ### Examples
@@ -93,11 +98,10 @@ and an overlay video:
 python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video=y
 ```
 
-Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `output` folder, showing only upper body parts, and using the confidence_threshold and smoothing to
-improve the output:
+Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `output` folder, showing only upper body parts, outputting up to 3 people, and using the confidence_threshold and smoothing to improve the output (using short form of arguments):
 
 ```bash
-python run_openpose.py --input-json=example_files/example_1person/output_json --output-dir=output --upper-body-parts --smoothing-parameters 21 2 --confidence-threshold=0.7
+python run_openpose.py -j example_files/example_3people/output_json -o output -u -n 3 -s 21 2 -c 0.7
 ```
 
 ## Post-processing options

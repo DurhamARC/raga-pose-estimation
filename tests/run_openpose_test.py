@@ -27,6 +27,7 @@ def test_run_openpose(output_path):
         output_path,
         input_video="example_files/example_3people/short_video.mp4",
         input_json=path_to_json,
+        number_of_people=2,
         create_model_video=True,
         create_overlay_video=True,
         body_parts=[
@@ -89,6 +90,7 @@ def test_run_openpose_flatten(output_path):
     run_openpose.run_openpose(
         output_path,
         input_json=path_to_json,
+        number_of_people=2,
         body_parts=[
             OpenPoseParts.L_EYE,
             OpenPoseParts.NOSE,
@@ -245,7 +247,7 @@ def test_openpose_cli_part_group(output_path):
     # Valid cli command
     result = os.system(
         f"python run_openpose.py --input-json example_files/example_3people/output_json "
-        f"--output-dir {output_path} --upper-body-parts"
+        f"--output-dir {output_path} --upper-body-parts -n 2"
     )
     assert result == 0
 
@@ -270,7 +272,7 @@ def test_openpose_cli_specified_parts(output_path):
     # Valid cli command with specific parts
     result = os.system(
         f"python run_openpose.py --input-json example_files/example_3people/output_json "
-        f"--output-dir {output_path} --body-parts=LEye,REye,Nose"
+        f"--output-dir {output_path} --body-parts=LEye,REye,Nose -n 2"
     )
     assert result == 0
 
