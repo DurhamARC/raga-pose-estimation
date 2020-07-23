@@ -10,6 +10,7 @@ This library was created for the [EnTimeMent](https://entimement.dibris.unige.it
 - [Running the CoLab script](#running-the-colab-script)
 - [Installation of `entimement_openpose` python library](#installation-of-entimementopenpose-python-library)
 - [Running the command line script](#running-the-command-line-script)
+- [Post-processing options](#post-processing-options)
 - [CSV format](#csv-format)
 
 <!-- /TOC -->
@@ -63,6 +64,10 @@ Options:
                                 lower than the threshold will be replaced by
                                 values from a previous frame.
 
+  --smoothing-parameters <INTEGER INTEGER>...
+                                Window and polynomial order for smoother.
+                                See README for details.
+
   --body-parts TEXT             Body parts to include in output. Should be a
                                 comma-separated list of strings as in the list
                                 at https://github.com/CMU-Perceptual-
@@ -88,11 +93,29 @@ and an overlay video:
 python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video=y
 ```
 
-Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `outpu` folder, showing only upper body parts:
+Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `output` folder, showing only upper body parts, and using the confidence_threshold and smoothing to
+improve the output:
 
 ```bash
-python run_openpose.py --input-json=example_files/example_1person/output_json --output-dir=output --upper-body-parts
+python run_openpose.py --input-json=example_files/example_1person/output_json --output-dir=output --upper-body-parts --smoothing-parameters 21 2 --confidence-threshold=0.7
 ```
+
+## Post-processing options
+
+There are two ways to reduce the jitter from the OpenPose output: using a confidence threshold and using the smoother.
+
+### Confidence Threshold
+
+Applying a confidence threshold removes values with a confidence level below the threshold and replaces them with the value from the previous frame.
+
+### Smoothing
+
+Setting the smoothing parameters applies a smoothing function to reduce the jitter between frames. The parameters are:
+
+ * **smoothing window**: the length of the smoothing window, which needs to be odd. The higher it is, the more frames are taken into account for smoothing; between 11 and 33 or so seems to work well. If it's too big it will affect/delay genuine movements.
+
+ * **polyorder**: the order of the polynomial used in the fitting function. It needs to be smaller than the smoothing window (2 seems to work well, 1 connects with straight lines, etc.)
+
 
 ## CSV format
 
