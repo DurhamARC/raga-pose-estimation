@@ -1,5 +1,6 @@
 # Project-specific
 output
+openpose-music
 
 # Mac OS stuff
 .DS_Store

@@ -45,10 +45,3 @@ jobs:
       - shell: bash -l {0}
         run: |
           pytest
-      - name: Upload pytest test results
-        uses: actions/upload-artifact@v1
-        with:
-          name: pytest-results-${{ matrix.python-version }}
-          path: htmlcov
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
