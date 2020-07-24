@@ -316,7 +316,7 @@ def run_openpose(
         try:
             # If running in Colab, need to use ipython's system call
             ip = get_ipython()
-            result = ip.system(cmd)
+            result = ip.system_piped(cmd)
         except NameError:
             # Otherwise (if get_ipython doesn't exist) we can just use os.system
             result = os.system(cmd)
