@@ -54,4 +54,6 @@ class CSVWriter:
                 ]
 
             # Output to CSV
-            all_dfs.to_csv(os.path.join(output_dir, f"person{i}.csv"))
+            all_dfs.to_csv(
+                os.path.join(output_dir, f"person{i}.csv"), float_format="%.3f"
+            )
