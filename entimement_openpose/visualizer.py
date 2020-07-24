@@ -71,8 +71,8 @@ class Visualizer:
         if not os.path.exists(self.output_directory):
             os.mkdir(output_directory)
 
-    def draw_points(self, imgs, pt_df):
-        """Draws keypoints on to the given image arrays.
+    def draw_points(self, img, pt_df):
+        """Draws keypoints on to the given image.
 
         Parameters
         ----------
@@ -99,11 +99,9 @@ class Visualizer:
                     color = Visualizer.L_COLOR
 
                 if pos[0] > 0 or pos[1] > 0:
-                    for key, img in imgs.items():
-                        if img is not None:
-                            img = cv2.circle(img, pos, 3, color, -1)
+                    img = cv2.circle(img, pos, 3, color, -1)
 
-    def draw_lines(self, imgs, pt_df, paths):
+    def draw_lines(self, img, pt_df, paths):
         """Draws lines joining body parts on to the given image arrays.
 
         Parameters
@@ -143,15 +141,9 @@ class Visualizer:
                 pts = pts[pts > 0]
                 pts = pts.reshape((-1, 1, 2))
 
-                for key, img in imgs.items():
-                    if img is not None:
-                        cv2.polylines(
-                            img,
-                            [pts],
-                            False,
-                            Visualizer.LINE_COLOR,
-                            thickness=2,
-                        )
+                cv2.polylines(
+                    img, [pts], False, Visualizer.LINE_COLOR, thickness=2,
+                )
 
     def get_paths_from_dataframe(df):
         paths = []
@@ -166,13 +158,12 @@ class Visualizer:
 
         return paths
 
-    def create_videos_from_dataframes(
+    def create_video_from_dataframes(
         self,
         file_basename,
         body_keypoints_dfs,
         width,
         height,
-        create_blank=True,
         create_overlay=False,
         video_to_overlay=None,
     ):
@@ -191,11 +182,8 @@ class Visualizer:
             Width of output video
         height : type
             Height of output video
-        create_blank : bool
-            Whether to create a visualisation with an empty background
-            (default True)
         create_overlay : bool
-            Whether to create a visualisation on top of an overlay
+            Whether to create the visualisation on top of an overlay
             (default False)
         video_to_overlay : str
             Path to video to overlay. Must be provided if create_overlay is
@@ -221,14 +209,15 @@ class Visualizer:
 
         paths = Visualizer.get_paths_from_dataframe(body_keypoints_dfs[0])
 
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+        name = "overlay" if create_overlay else "blank"
+        filename = os.path.join(
+            self.output_directory, "%s_%s.avi" % (file_basename, name)
+        )
+        out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
+
         # Draw the data from the DataFrame
-        img_arrays = {"blank": [], "overlay": []}
         for df in body_keypoints_dfs:
-            imgs = {"blank": None, "overlay": None}
-
-            if create_blank:
-                imgs["blank"] = np.ones((height, width, 3), np.uint8)
-
             if create_overlay:
                 ret, frame = cap.read()
                 if not ret:
@@ -236,26 +225,16 @@ class Visualizer:
                         "Not enough frames in overlay video to "
                         "match data frame"
                     )
-                imgs["overlay"] = frame
+                img = frame
+            else:
+                img = np.ones((height, width, 3), np.uint8)
 
-            self.draw_lines(imgs, df, paths)
-            self.draw_points(imgs, df)
+            self.draw_lines(img, df, paths)
+            self.draw_points(img, df)
 
-            for k, v in imgs.items():
-                if v is not None:
-                    img_arrays[k].append(v)
+            out.write(img)
 
         if create_overlay:
             cap.release()
 
-        for key, img_array in img_arrays.items():
-            if len(img_array):
-                fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-                filename = os.path.join(
-                    self.output_directory, "%s_%s.avi" % (file_basename, key)
-                )
-                out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
-                for i in range(len(img_array)):
-                    out.write(img_array[i])
-
-                out.release()
+        out.release()
