@@ -153,7 +153,7 @@ which in table form looks like this:
 If you export CSVs with `flatten=False`, they can be read back into a `pandas.DataFrame` as follows:
 
 ```python
-df = pd.read_csv(csv_path, f), header=[0,1], index_col=0)
+df = pd.read_csv(csv_path, header=[0,1], index_col=0)
 ```
 
 The dataframe will have `MultiIndex` columns to allow easier access to the values.
