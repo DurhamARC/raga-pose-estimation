@@ -45,6 +45,13 @@ from entimement_openpose.visualizer import Visualizer
     help="Path to the directory in which openpose is installed.",
 )
 @click.option(
+    "-a",
+    "--openpose-args",
+    help="Additional arguments to pass to OpenPose. See "
+    "https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/include/openpose/flags.hpp"
+    " for a full list of options.",
+)
+@click.option(
     "-m",
     "--create-model-video",
     is_flag=True,
@@ -122,6 +129,7 @@ from entimement_openpose.visualizer import Visualizer
 def openpose_cli(
     output_dir,
     openpose_dir,
+    openpose_args,
     input_video,
     input_json,
     number_of_people,
@@ -157,6 +165,7 @@ def openpose_cli(
     run_openpose(
         output_dir,
         openpose_dir,
+        openpose_args,
         input_video,
         input_json,
         number_of_people,
@@ -174,6 +183,7 @@ def openpose_cli(
 def run_openpose(
     output_dir,
     openpose_dir=None,
+    openpose_args=None,
     input_video=None,
     input_json=None,
     number_of_people=1,
@@ -197,6 +207,8 @@ def run_openpose(
     openpose_dir : str
         Path to the directory in which openpose is
         installed.
+    openpose_args : str
+        Additional arguments to pass to openpose.
     input_video : str
         Path to the video file on which to run
         openpose.
@@ -298,6 +310,9 @@ def run_openpose(
             f"--video {input_video} "
             f"--write_json {path_to_json} --display 0 --render-pose 0"
         )
+        if openpose_args:
+            cmd = f"{cmd} {openpose_args}"
+
         try:
             # If running in Colab, need to use ipython's system call
             ip = get_ipython()

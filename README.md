@@ -50,6 +50,12 @@ Options:
   -O, --openpose-dir TEXT         Path to the directory in which openpose is
                                   installed.
 
+  -a, --openpose-args TEXT        Additional arguments to pass to OpenPose.
+                                  See https://github.com/CMU-Perceptual-
+                                  Computing-Lab/openpose/blob/master/include/o
+                                  penpose/flags.hpp for a full list of
+                                  options.
+
   -m, --create-model-video        Whether to create a video showing the poses
                                   on a blank background
 
@@ -95,7 +101,7 @@ Run OpenPose on a video to produce output CSVs (1 per person) in the `output` di
 and an overlay video:
 
 ```bash
-python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video=y
+python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video
 ```
 
 Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `output` folder, showing only upper body parts, outputting up to 3 people, and using the confidence_threshold and smoothing to improve the output (using short form of arguments):
