@@ -364,12 +364,6 @@ def run_openpose(
         smoother = Smoother(*smoothing_parameters)
         body_keypoints_dfs = smoother.smooth(body_keypoints_dfs)
 
-    if create_model_video:
-        print("Creating model video...")
-
-    if create_overlay_video:
-        print("Creating overlay video...")
-
     if create_model_video or create_overlay_video:
         if not width or not height:
             cap = cv2.VideoCapture(input_video)
@@ -380,11 +374,13 @@ def run_openpose(
         visualizer = Visualizer(output_directory=output_dir)
 
         if create_model_video:
+            print("Creating model video...")
             visualizer.create_video_from_dataframes(
                 "video", body_keypoints_dfs, width, height
             )
 
         if create_overlay_video:
+            print("Creating overlay video...")
             visualizer.create_video_from_dataframes(
                 "video",
                 body_keypoints_dfs,
