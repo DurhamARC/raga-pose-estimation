@@ -29,7 +29,7 @@ def test_create_video(dummy_dataframe):
         os.remove(output_filename)
 
     # Create a video from the dataframe on a blank background
-    viz.create_videos_from_dataframes("test", [dummy_dataframe], 20, 10)
+    viz.create_video_from_dataframes("test", [dummy_dataframe], 20, 10)
 
     # Check video file has been created and is about the size we expect
     assert os.path.isfile("output/test_blank.avi")
@@ -42,13 +42,13 @@ def test_create_overlay_invalid():
 
     # Create overlay without specifying video to overlay
     with pytest.raises(ValueError):
-        viz.create_videos_from_dataframes(
+        viz.create_video_from_dataframes(
             "test_invalid", [pd.DataFrame()], 20, 10, create_overlay=True
         )
 
     # Try to create overlay specifying invalid video
     with pytest.raises(ValueError):
-        viz.create_videos_from_dataframes(
+        viz.create_video_from_dataframes(
             "test_invalid",
             [pd.DataFrame()],
             20,
@@ -60,7 +60,7 @@ def test_create_overlay_invalid():
     # Try to create overlay with valid file but not enough frames
     many_dfs = [pd.DataFrame() for x in range(500)]
     with pytest.raises(ValueError):
-        viz.create_videos_from_dataframes(
+        viz.create_video_from_dataframes(
             "test_invalid",
             many_dfs,
             20,
@@ -75,7 +75,7 @@ def test_draw_points(dummy_dataframe):
     height = 10
     width = 20
     img = np.ones((height, width, 3), np.uint8)
-    viz.draw_points({"test": img}, dummy_dataframe)
+    viz.draw_points(img, dummy_dataframe)
 
     # Points from data frame in x, y coordinates
     expected_points = [(2, 8), (15, 5)]
@@ -105,7 +105,7 @@ def test_draw_lines(dummy_dataframe):
     height = 10
     width = 20
     img = np.ones((height, width, 3), np.uint8)
-    viz.draw_lines({"test": img}, dummy_dataframe, viz.LINE_PATHS)
+    viz.draw_lines(img, dummy_dataframe, viz.LINE_PATHS)
 
     # Points from data frame in x, y coordinates
     expected_points = [(2, 8), (15, 5)]

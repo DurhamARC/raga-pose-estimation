@@ -364,12 +364,6 @@ def run_openpose(
         smoother = Smoother(*smoothing_parameters)
         body_keypoints_dfs = smoother.smooth(body_keypoints_dfs)
 
-    if create_model_video:
-        print("Creating model video...")
-
-    if create_overlay_video:
-        print("Creating overlay video...")
-
     if create_model_video or create_overlay_video:
         if not width or not height:
             cap = cv2.VideoCapture(input_video)
@@ -378,15 +372,23 @@ def run_openpose(
             cap.release()
 
         visualizer = Visualizer(output_directory=output_dir)
-        visualizer.create_videos_from_dataframes(
-            "video",
-            body_keypoints_dfs,
-            width,
-            height,
-            create_blank=create_model_video,
-            create_overlay=create_overlay_video,
-            video_to_overlay=input_video,
-        )
+
+        if create_model_video:
+            print("Creating model video...")
+            visualizer.create_video_from_dataframes(
+                "video", body_keypoints_dfs, width, height
+            )
+
+        if create_overlay_video:
+            print("Creating overlay video...")
+            visualizer.create_video_from_dataframes(
+                "video",
+                body_keypoints_dfs,
+                width,
+                height,
+                create_overlay=create_overlay_video,
+                video_to_overlay=input_video,
+            )
 
     print(f"Saving CSVs to {output_dir}...")
     CSVWriter.writeCSV(body_keypoints_dfs, output_dir, flatten=flatten)
