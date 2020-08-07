@@ -11,11 +11,21 @@ from entimement_openpose.visualizer import Visualizer
 
 @pytest.fixture
 def dummy_dataframe():
-    data = {"x": [2, 15], "y": [8, 5], "confidence": [0.1, 0.8]}
+    data = {
+        "x": [2, 15, np.nan],
+        "y": [8, 5, np.nan],
+        "confidence": [0.1, 0.8, np.nan],
+    }
     df = pd.DataFrame(
         data,
         columns=["x", "y", "confidence"],
-        index=pd.Index([OpenPoseParts.R_EAR.value, OpenPoseParts.R_EYE.value]),
+        index=pd.Index(
+            [
+                OpenPoseParts.R_EAR.value,
+                OpenPoseParts.R_EYE.value,
+                OpenPoseParts.NOSE.value,
+            ]
+        ),
     )
     return df
 

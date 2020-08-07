@@ -90,15 +90,15 @@ class Visualizer:
         n_people = len(pt_df.columns) // 3
         for index, row in pt_df.iterrows():
             for i in range(n_people):
-                pos = (int(row[i * 3]), int(row[i * 3 + 1]))
+                if not np.isnan(row[i * 3]):
+                    pos = (int(row[i * 3]), int(row[i * 3 + 1]))
 
-                color = Visualizer.MID_COLOR
-                if row.name.startswith("R"):
-                    color = Visualizer.R_COLOR
-                elif row.name.startswith("L"):
-                    color = Visualizer.L_COLOR
+                    color = Visualizer.MID_COLOR
+                    if row.name.startswith("R"):
+                        color = Visualizer.R_COLOR
+                    elif row.name.startswith("L"):
+                        color = Visualizer.L_COLOR
 
-                if pos[0] > 0 or pos[1] > 0:
                     img = cv2.circle(img, pos, 3, color, -1)
 
     def draw_lines(self, img, pt_df, paths):
@@ -132,8 +132,8 @@ class Visualizer:
                     if part.value in pt_df.index:
                         part_index = pt_df.index.get_loc(part.value)
                         row = pt_df.iloc[part_index, i * 3 : i * 3 + 2]
-                        pt = np.int32(row.values)
-                        if pt[0] > 0 and pt[1] > 0:
+                        if not np.isnan(row).any():
+                            pt = np.int32(row.values)
                             pts[count] = pt
                             count += 1
 
