@@ -378,17 +378,15 @@ def run_openpose(
 
         if create_model_video:
             print("Creating model video...")
-            # FIXME: currently uses unsmoothed data
             visualizer.create_video_from_dataframes(
-                "video", body_keypoints_dfs, width, height
+                "video", person_dfs, width, height
             )
 
         if create_overlay_video:
             print("Creating overlay video...")
-            # FIXME: currently uses unsmoothed data
             visualizer.create_video_from_dataframes(
                 "video",
-                body_keypoints_dfs,
+                person_dfs,
                 width,
                 height,
                 create_overlay=create_overlay_video,

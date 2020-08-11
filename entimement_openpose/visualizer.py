@@ -71,7 +71,7 @@ class Visualizer:
         if not os.path.exists(self.output_directory):
             os.mkdir(output_directory)
 
-    def draw_points(self, img, pt_df):
+    def draw_points(self, img, person_dfs, frame_index):
         """Draws keypoints on to the given image.
 
         Parameters
@@ -79,29 +79,33 @@ class Visualizer:
         img : array of np.array
             Array of image arrays in OpenCV format
 
-        pt_df : DataFrame
-            DataFrame containing keypoints
+        person_dfs : list of DataFrame
+            DataFrame containing person keypoints
+
+        frame_index: int
+            index of frame to draw
 
         Returns
         -------
         None
 
         """
-        n_people = len(pt_df.columns) // 3
-        for index, row in pt_df.iterrows():
-            for i in range(n_people):
-                if not np.isnan(row[i * 3]):
-                    pos = (int(row[i * 3]), int(row[i * 3 + 1]))
+        for person_df in person_dfs:
+            row = person_df.iloc[frame_index]
+
+            for part in row.index.levels[0]:
+                if not np.isnan(row[part]).any():
+                    pos = (int(row[part]["x"]), int(row[part]["y"]))
 
                     color = Visualizer.MID_COLOR
-                    if row.name.startswith("R"):
+                    if part.startswith("R"):
                         color = Visualizer.R_COLOR
-                    elif row.name.startswith("L"):
+                    elif part.startswith("L"):
                         color = Visualizer.L_COLOR
 
                     img = cv2.circle(img, pos, 3, color, -1)
 
-    def draw_lines(self, img, pt_df, paths):
+    def draw_lines(self, img, person_dfs, frame_index, paths):
         """Draws lines joining body parts on to the given image arrays.
 
         Parameters
@@ -109,8 +113,11 @@ class Visualizer:
         imgs : dictionary of np.array
             Dictionary of image arrays in OpenCV format
 
-        pt_df : DataFrame
-            DataFrame containing keypoints
+        person_dfs : list of DataFrame
+            DataFrame containing person keypoints
+
+        frame_index: int
+            index of frame to draw
 
         paths: array of arrays of OpenPoseParts
             arrays of paths to display, where each path is an array of
@@ -121,20 +128,17 @@ class Visualizer:
         None
 
         """
-        n_people = len(pt_df.columns) // 3
-
-        for i in range(n_people):
+        for person_df in person_dfs:
+            row = person_df.iloc[frame_index]
             for line in paths:
                 pts = np.zeros(shape=(len(line), 2), dtype=np.int32)
                 count = 0
 
                 for part in line:
-                    if part.value in pt_df.index:
-                        part_index = pt_df.index.get_loc(part.value)
-                        row = pt_df.iloc[part_index, i * 3 : i * 3 + 2]
-                        if not np.isnan(row).any():
-                            pt = np.int32(row.values)
-                            pts[count] = pt
+                    if part.value in row.index.levels[0]:
+                        if not np.isnan(row[part.value]).any():
+                            pt = np.int32(row[part.value].values)
+                            pts[count] = pt[:2]
                             count += 1
 
                 # Filter out zero points, then reshape before drawing
@@ -145,13 +149,13 @@ class Visualizer:
                     img, [pts], False, Visualizer.LINE_COLOR, thickness=2,
                 )
 
-    def get_paths_from_dataframe(df):
+    def get_paths_from_dataframe(person_df):
         paths = []
 
         for path in Visualizer.LINE_PATHS:
             new_path = []
             for part in path:
-                if part.value in df.index:
+                if part.value in person_df.columns.levels[0]:
                     new_path.append(part)
             if new_path:
                 paths.append(new_path)
@@ -161,7 +165,7 @@ class Visualizer:
     def create_video_from_dataframes(
         self,
         file_basename,
-        body_keypoints_dfs,
+        person_dfs,
         width,
         height,
         create_overlay=False,
@@ -176,8 +180,8 @@ class Visualizer:
         file_basename : str
             Base name of file. Will create files <file_basename>_blank.avi
             and/or <file_basename>_overlay.avi
-        body_keypoints_dfs : array of DataFrames
-            Array of DataFrames as created by OpenPoseJsonParser
+        person_dfs : array of DataFrames
+            Array of DataFrames as created by Reshaper.reshape_dataframes
         width : int
             Width of output video
         height : type
@@ -207,7 +211,7 @@ class Visualizer:
 
             cap = cv2.VideoCapture(video_to_overlay)
 
-        paths = Visualizer.get_paths_from_dataframe(body_keypoints_dfs[0])
+        paths = Visualizer.get_paths_from_dataframe(person_dfs[0])
 
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
         name = "overlay" if create_overlay else "blank"
@@ -217,7 +221,7 @@ class Visualizer:
         out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
 
         # Draw the data from the DataFrame
-        for df in body_keypoints_dfs:
+        for i in range(len(person_dfs[0].index)):
             if create_overlay:
                 ret, frame = cap.read()
                 if not ret:
@@ -229,8 +233,8 @@ class Visualizer:
             else:
                 img = np.ones((height, width, 3), np.uint8)
 
-            self.draw_lines(img, df, paths)
-            self.draw_points(img, df)
+            self.draw_lines(img, person_dfs, i, paths)
+            self.draw_points(img, person_dfs, i)
 
             out.write(img)
 
