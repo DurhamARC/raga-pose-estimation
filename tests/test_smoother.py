@@ -1,14 +1,11 @@
 import numpy as np
 import pandas as pd
-import pytest
 
 from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
-from entimement_openpose.openpose_parts import (
-    OpenPoseParts,
-    OpenPosePartGroups,
-)
+from entimement_openpose.openpose_parts import OpenPoseParts
+
 from . import dummy_dataframes
 
 
@@ -56,10 +53,7 @@ def test_smoother():
         for part in smoothed_df.columns.levels[0]:
             part_df = smoothed_df[part]
             if np.isnan(part_df["x"]).any():
-                try:
-                    orig_part_df = person_dfs[i][part]
-                except IndexError:
-                    breakpoint()
+                orig_part_df = person_dfs[i][part]
                 # Rows with alternate NaNs and 0s won't be smoothed
                 pd.testing.assert_frame_equal(part_df, orig_part_df)
             else:

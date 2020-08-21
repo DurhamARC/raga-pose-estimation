@@ -14,7 +14,6 @@ def reshape_dataframes(dataframes):
     dataframes : list of DataFrame
         List of DataFrames as produced by OpenPoseJsonParser.
     """
-    print(type(dataframes))
     n_people = len(dataframes[0].columns) // 3
     all_person_dfs = []
 

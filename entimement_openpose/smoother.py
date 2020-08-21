@@ -48,21 +48,16 @@ class Smoother:
         for person_df in person_dfs:
             # Create copy so we don't modify original
             smoothed_df = person_df.copy()
-            # print("before:")
-            # print(person_df)
             # Split into parts so we can split into chunks where each part
             # appears/disappears, and smooth over each chunk separately
             for part in smoothed_df.columns.levels[0]:
                 part_df = smoothed_df[part]
                 nan_indices = np.where(part_df["x"].isna())[0]
-                # print(f"Nan indices: {nan_indices}")
                 smoothed_df[part] = part_df.apply(
                     lambda x: self._chunk_and_smooth_col(x, nan_indices)
                 )
 
             smoothed_dfs.append(smoothed_df)
-            # print("after:")
-            # print(person_df)
 
         return smoothed_dfs
 
