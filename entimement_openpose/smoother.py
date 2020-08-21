@@ -80,12 +80,14 @@ class Smoother:
                     s = s.iloc[1:]
 
                 # Smooth if possible
-                # Should we smooth with a smaller window rather than
-                # not smoothing at all?
-                if len(s) > self.smoothing_window:
-                    s = signal.savgol_filter(
-                        s, self.smoothing_window, self.polyorder
-                    )
+                if len(s) > self.polyorder:
+                    window = self.smoothing_window
+                    # Use a smaller window rather than no smoothing if
+                    # the chunk is smaller than the window
+                    if len(s) < window:
+                        window = len(s) - 1 if len(s) % 2 == 0 else len(s)
+
+                    s = signal.savgol_filter(s, window, self.polyorder)
 
                 smoothed_arrays.append(pd.Series(s))
 
