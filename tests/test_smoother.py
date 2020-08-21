@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from entimement_openpose.reshaper import Reshaper
+from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import (
@@ -28,7 +28,7 @@ def test_smoother():
     for i in range(20):
         keypoint_array.append(sorted_keypoints)
 
-    person_dfs = Reshaper.reshape_dataframes(keypoint_array)
+    person_dfs = reshape_dataframes(keypoint_array)
 
     # Smooth
     smoother = Smoother(5, 2)
@@ -45,7 +45,7 @@ def test_smoother():
     for i in range(0, 20, 2):
         keypoint_array[i] = zero_keypoints
 
-    person_dfs = Reshaper.reshape_dataframes(keypoint_array)
+    person_dfs = reshape_dataframes(keypoint_array)
 
     # Smooth
     smoother = Smoother(3, 1)
@@ -88,7 +88,7 @@ def test_chunk_and_smooth(dummy_dataframes):
         keypoint_array.append(dummy_dataframes[2])
         keypoint_array.append(dummy_dataframes[2])
 
-    person_dfs = Reshaper.reshape_dataframes(keypoint_array)
+    person_dfs = reshape_dataframes(keypoint_array)
 
     smoother = Smoother(5, 2)
     smoothed_dfs = smoother.smooth(person_dfs)

@@ -181,7 +181,7 @@ class Visualizer:
             Base name of file. Will create files <file_basename>_blank.avi
             and/or <file_basename>_overlay.avi
         person_dfs : array of DataFrames
-            Array of DataFrames as created by Reshaper.reshape_dataframes
+            Array of DataFrames as created by reshape_dataframes
         width : int
             Width of output video
         height : type
