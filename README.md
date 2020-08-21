@@ -110,6 +110,14 @@ Parse existing JSON files created by OpenPose to produce 1 CSV per person in the
 python run_openpose.py -j example_files/example_3people/output_json -o output -u -n 3 -s 21 2 -c 0.7
 ```
 
+### Quick run
+
+The script `run_samples.sh` runs a sensible set of default options on the two examples in example_files, producing both overlay and model videos.
+
+```bash
+./run_samples.sh
+```
+
 ## Post-processing options
 
 There are two ways to reduce the jitter from the OpenPose output: using a confidence threshold and using the smoother.
