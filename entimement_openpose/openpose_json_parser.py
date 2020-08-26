@@ -187,12 +187,26 @@ class OpenPoseJsonParser:
                 )
 
                 # Place in dataframe
+                person_df = pd.DataFrame(np_v_reshape)
+
+                # Check if x, y, confidence are all 0, and replace with nulls
+                def replace_zeros(row):
+                    if (row == 0).all():
+                        return np.nan
+                    else:
+                        return row
+
+                person_df = person_df.apply(
+                    lambda row: replace_zeros(row), axis=1
+                )
+
                 body_keypoints_df = pd.concat(
-                    [body_keypoints_df, pd.DataFrame(np_v_reshape)], axis=1
+                    [body_keypoints_df, person_df], axis=1
                 )
 
         body_keypoints_df.columns = column_names
         body_keypoints_df.index = self.ROW_NAMES
+
         # Check whether previous frame had higher confidence points and replace
         if (
             not previous_body_keypoints_df is None

@@ -7,20 +7,10 @@ import pytest
 
 from entimement_openpose.openpose_parts import OpenPoseParts
 from entimement_openpose.visualizer import Visualizer
+from . import single_frame_person_df, three_frame_person_dfs
 
 
-@pytest.fixture
-def dummy_dataframe():
-    data = {"x": [2, 15], "y": [8, 5], "confidence": [0.1, 0.8]}
-    df = pd.DataFrame(
-        data,
-        columns=["x", "y", "confidence"],
-        index=pd.Index([OpenPoseParts.R_EAR.value, OpenPoseParts.R_EYE.value]),
-    )
-    return df
-
-
-def test_create_video(dummy_dataframe):
+def test_create_video(three_frame_person_dfs):
     viz = Visualizer("output")
 
     # Ensure file doesn't exist
@@ -29,7 +19,7 @@ def test_create_video(dummy_dataframe):
         os.remove(output_filename)
 
     # Create a video from the dataframe on a blank background
-    viz.create_video_from_dataframes("test", [dummy_dataframe], 20, 10)
+    viz.create_video_from_dataframes("test", three_frame_person_dfs, 20, 10)
 
     # Check video file has been created and is about the size we expect
     assert os.path.isfile("output/test_blank.avi")
@@ -70,12 +60,12 @@ def test_create_overlay_invalid():
         )
 
 
-def test_draw_points(dummy_dataframe):
+def test_draw_points(single_frame_person_df):
     viz = Visualizer("output")
     height = 10
     width = 20
     img = np.ones((height, width, 3), np.uint8)
-    viz.draw_points(img, dummy_dataframe)
+    viz.draw_points(img, single_frame_person_df, 0)
 
     # Points from data frame in x, y coordinates
     expected_points = [(2, 8), (15, 5)]
@@ -100,12 +90,12 @@ def test_draw_points(dummy_dataframe):
                 assert img[y, x].tolist() == [1, 1, 1]
 
 
-def test_draw_lines(dummy_dataframe):
+def test_draw_lines(single_frame_person_df):
     viz = Visualizer("output")
     height = 10
     width = 20
     img = np.ones((height, width, 3), np.uint8)
-    viz.draw_lines(img, dummy_dataframe, viz.LINE_PATHS)
+    viz.draw_lines(img, single_frame_person_df, 0, viz.LINE_PATHS)
 
     # Points from data frame in x, y coordinates
     expected_points = [(2, 8), (15, 5)]

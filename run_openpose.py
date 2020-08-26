@@ -3,12 +3,13 @@ import os
 import click
 import cv2
 
-from entimement_openpose.csv_writer import CSVWriter
+from entimement_openpose.csv_writer import write_csv
 from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
 )
+from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.visualizer import Visualizer
 
@@ -359,10 +360,12 @@ def run_openpose(
         body_keypoints_dfs.append(body_keypoints_df)
         previous_body_keypoints_df = body_keypoints_df
 
+    person_dfs = reshape_dataframes(body_keypoints_dfs)
+
     if smoothing_parameters:
         print("Smoothing output...")
         smoother = Smoother(*smoothing_parameters)
-        body_keypoints_dfs = smoother.smooth(body_keypoints_dfs)
+        person_dfs = smoother.smooth(person_dfs)
 
     if create_model_video or create_overlay_video:
         if not width or not height:
@@ -376,14 +379,14 @@ def run_openpose(
         if create_model_video:
             print("Creating model video...")
             visualizer.create_video_from_dataframes(
-                "video", body_keypoints_dfs, width, height
+                "video", person_dfs, width, height
             )
 
         if create_overlay_video:
             print("Creating overlay video...")
             visualizer.create_video_from_dataframes(
                 "video",
-                body_keypoints_dfs,
+                person_dfs,
                 width,
                 height,
                 create_overlay=create_overlay_video,
@@ -391,7 +394,7 @@ def run_openpose(
             )
 
     print(f"Saving CSVs to {output_dir}...")
-    CSVWriter.writeCSV(body_keypoints_dfs, output_dir, flatten=flatten)
+    write_csv(person_dfs, output_dir, flatten=flatten)
     print("Done.")
 
 
