@@ -366,7 +366,7 @@ def run_openpose(
             # Otherwise (if get_ipython doesn't exist) we can just use os.system
             result = os.system(cmd)
 
-        if result != 0:
+        if result:
             print(f"Unable to run openpose from {openpose_dir}.")
             exit(1)
 
