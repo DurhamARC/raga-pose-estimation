@@ -179,6 +179,21 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
         == "You must provide an input video in order to create an overlay video.\n"
     )
 
+    # Crop without input video
+    with pytest.raises(SystemExit):
+        run_openpose.run_openpose(
+            output_path,
+            input_json="example_files/example_3people/output_json",
+            create_model_video=True,
+            crop_rectangle=(1, 2, 3, 4),
+        )
+
+    captured = capsys.readouterr()
+    assert (
+        captured.out
+        == "You must provide an input video in order to crop the video.\n"
+    )
+
     # Model video without dimensions or input video
     with pytest.raises(SystemExit):
         run_openpose.run_openpose(
@@ -201,6 +216,41 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     invalid_path = os.path.realpath("notavalidpath")
     assert captured.out == f"Invalid input_json path {invalid_path}.\n"
 
+    # Invalid crop parameters
+    for crop_rect in [("top left", 20, 4, 30), (1, 2, 3)]:
+        with pytest.raises(SystemExit):
+            run_openpose.run_openpose(
+                output_path,
+                openpose_dir=".",
+                input_video="example_files/example_3people/short_video.mp4",
+                crop_rectangle=("top left", 20, 4, 30),
+            )
+
+        captured = capsys.readouterr()
+        assert (
+            captured.out
+            == "You must provide 4 integer coordinates to crop_rectangle.\n"
+        )
+
+    with pytest.raises(SystemExit):
+        run_openpose.run_openpose(
+            output_path,
+            openpose_dir=".",
+            input_video="example_files/example_3people/short_video.mp4",
+            crop_rectangle=(100, 200, 0, 0),
+        )
+
+    current_path = os.getcwd()
+    captured = capsys.readouterr()
+    assert (
+        captured.out
+        == f"Cropping video {current_path}/example_files/example_3people/short_video.mp4...\n"
+        f"Unable to crop video {current_path}/example_files/example_3people/short_video.mp4 with coords (100, 200, 0, 0).\n"
+    )
+
+    # Reset the output path
+    shutil.rmtree(output_path)
+
     # Invalid openpose path
     with pytest.raises(SystemExit):
         run_openpose.run_openpose(
@@ -212,7 +262,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"Detecting poses on example_files/example_3people/short_video.mp4...\n"
+        == f"Detecting poses on {current_path}/example_files/example_3people/short_video.mp4...\n"
         f"Invalid openpose path {invalid_path}.\n"
     )
 
@@ -228,7 +278,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"Detecting poses on example_files/example_3people/short_video.mp4...\n"
+        == f"Detecting poses on {current_path}/example_files/example_3people/short_video.mp4...\n"
         f"Unable to run openpose from {example_path}.\n"
     )
 

@@ -11,6 +11,7 @@ from entimement_openpose.openpose_parts import (
 )
 from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
+from entimement_openpose.video_utils import crop_video
 from entimement_openpose.visualizer import Visualizer
 
 
@@ -33,6 +34,16 @@ from entimement_openpose.visualizer import Visualizer
     prompt="Output directory",
     help="Path to the directory in which to output CSV files (and "
     "videos if required).",
+)
+@click.option(
+    "-c",
+    "--crop-rectangle",
+    nargs=4,
+    type=int,
+    default=None,
+    help="Coordinates of rectangle to crop the video before processing, in "
+    "the form x1,y1,x2,y2 where (x1,x2) is the top-left of the rectangle, "
+    "and (x2,y2) is the bottom-right.",
 )
 @click.option(
     "-n",
@@ -133,6 +144,7 @@ def openpose_cli(
     openpose_args,
     input_video,
     input_json,
+    crop_rectangle,
     number_of_people,
     create_model_video,
     create_overlay_video,
@@ -169,6 +181,7 @@ def openpose_cli(
         openpose_args,
         input_video,
         input_json,
+        crop_rectangle,
         number_of_people,
         create_model_video,
         create_overlay_video,
@@ -187,6 +200,7 @@ def run_openpose(
     openpose_args=None,
     input_video=None,
     input_json=None,
+    crop_rectangle=None,
     number_of_people=1,
     create_model_video=False,
     create_overlay_video=False,
@@ -213,6 +227,10 @@ def run_openpose(
     input_video : str
         Path to the video file on which to run
         openpose.
+    crop_rectangle : tuple(int)
+        Coordinates for cropping the video before
+        processing. Should be a tuple (top_left_x,
+        top_left_y, bottom_right_x, bottom_right_y)
     input_json : str
         Path to a directory of previously generated
         openpose json files.
@@ -264,6 +282,10 @@ def run_openpose(
         )
         exit(1)
 
+    if input_video is None and crop_rectangle:
+        print("You must provide an input video in order to crop the video.")
+        exit(1)
+
     if input_video is None and create_overlay_video:
         print(
             "You must provide an input video in order to create an overlay "
@@ -282,6 +304,13 @@ def run_openpose(
         )
         exit(1)
 
+    if crop_rectangle and (
+        type(crop_rectangle) != tuple
+        or len([c for c in crop_rectangle if type(c) == int]) != 4
+    ):
+        print("You must provide 4 integer coordinates to crop_rectangle.")
+        exit(1)
+
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
 
@@ -294,6 +323,22 @@ def run_openpose(
         else:
             print(f"Processing JSON from {path_to_json}...")
     else:
+        input_video = os.path.realpath(input_video)
+
+        # Crop the video before processing
+        if crop_rectangle:
+            print(f"Cropping video {input_video}...")
+            try:
+                input_video = crop_video(
+                    input_video, output_dir, *crop_rectangle
+                )
+                print(f"Cropped video at {input_video}...")
+            except Exception:
+                print(
+                    f"Unable to crop video {input_video} with coords {crop_rectangle}."
+                )
+                exit(1)
+
         print(f"Detecting poses on {input_video}...")
 
         # Run openpose over the video
@@ -303,7 +348,6 @@ def run_openpose(
             exit(1)
 
         # Calling out to the binary seems to be quicker than the python wrapper
-        input_video = os.path.realpath(input_video)
         path_to_json = os.path.join(output_dir, "json")
         cmd = (
             f"cd {openpose_dir} && "
