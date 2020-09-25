@@ -240,12 +240,13 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
             crop_rectangle=(100, 200, 0, 0),
         )
 
-    current_path = os.getcwd()
     captured = capsys.readouterr()
+    video_full_path = os.path.join(
+        os.getcwd(), "example_files/example_3people/short_video.mp4"
+    )
     assert (
-        captured.out
-        == f"Cropping video {current_path}/example_files/example_3people/short_video.mp4...\n"
-        f"Unable to crop video {current_path}/example_files/example_3people/short_video.mp4 with coords (100, 200, 0, 0).\n"
+        captured.out == f"Cropping video {video_full_path}...\n"
+        f"Unable to crop video {video_full_path} with coords (100, 200, 0, 0).\n"
     )
 
     # Reset the output path
@@ -261,8 +262,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     captured = capsys.readouterr()
     assert (
-        captured.out
-        == f"Detecting poses on {current_path}/example_files/example_3people/short_video.mp4...\n"
+        captured.out == f"Detecting poses on {video_full_path}...\n"
         f"Invalid openpose path {invalid_path}.\n"
     )
 
@@ -277,8 +277,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     captured = capsys.readouterr()
     assert (
-        captured.out
-        == f"Detecting poses on {current_path}/example_files/example_3people/short_video.mp4...\n"
+        captured.out == f"Detecting poses on {video_full_path}...\n"
         f"Unable to run openpose from {example_path}.\n"
     )
 
