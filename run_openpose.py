@@ -36,7 +36,7 @@ from entimement_openpose.visualizer import Visualizer
     "videos if required).",
 )
 @click.option(
-    "-c",
+    "-r",
     "--crop-rectangle",
     nargs=4,
     type=int,
