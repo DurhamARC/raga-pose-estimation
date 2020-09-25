@@ -216,13 +216,17 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     invalid_path = os.path.realpath("notavalidpath")
     assert captured.out == f"Invalid input_json path {invalid_path}.\n"
 
+    input_video_path = os.path.join(
+        "example_files", "example_3people", "short_video.mp4"
+    )
+
     # Invalid crop parameters
     for crop_rect in [("top left", 20, 4, 30), (1, 2, 3)]:
         with pytest.raises(SystemExit):
             run_openpose.run_openpose(
                 output_path,
                 openpose_dir=".",
-                input_video="example_files/example_3people/short_video.mp4",
+                input_video=input_video_path,
                 crop_rectangle=("top left", 20, 4, 30),
             )
 
@@ -236,14 +240,12 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
         run_openpose.run_openpose(
             output_path,
             openpose_dir=".",
-            input_video="example_files/example_3people/short_video.mp4",
+            input_video=input_video_path,
             crop_rectangle=(100, 200, 0, 0),
         )
 
     captured = capsys.readouterr()
-    video_full_path = os.path.join(
-        os.getcwd(), "example_files/example_3people/short_video.mp4"
-    )
+    video_full_path = os.path.join(os.getcwd(), input_video_path)
     assert (
         captured.out == f"Cropping video {video_full_path}...\n"
         f"Unable to crop video {video_full_path} with coords (100, 200, 0, 0).\n"
