@@ -7,7 +7,7 @@ from entimement_openpose.video_utils import crop_video
 
 def test_crop_video():
     # Ensure file doesn't exist
-    output_filename = "output/cropped.mp4"
+    output_filename = os.path.join("output", "cropped.mp4")
     if os.path.exists(output_filename):
         os.remove(output_filename)
 
