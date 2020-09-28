@@ -42,8 +42,9 @@ from entimement_openpose.visualizer import Visualizer
     type=int,
     default=None,
     help="Coordinates of rectangle to crop the video before processing, in "
-    "the form x1,y1,x2,y2 where (x1,x2) is the top-left of the rectangle, "
-    "and (x2,y2) is the bottom-right.",
+    "the form w h x y where w and h are the width and height of the cropped "
+    "rectangle and (x,y) is the top-left of the rectangle, as measured in "
+    "pixels from the top-left corner.",
 )
 @click.option(
     "-n",
@@ -229,8 +230,11 @@ def run_openpose(
         openpose.
     crop_rectangle : tuple(int)
         Coordinates for cropping the video before
-        processing. Should be a tuple (top_left_x,
-        top_left_y, bottom_right_x, bottom_right_y)
+        processing. Should be a tuple (width, height, x, y)
+        giving the width and height of the cropped
+        rectangle and the coordinates (x,y) of the
+        top-left of the rectangle, as measured in
+        pixels from the top-left corner.
     input_json : str
         Path to a directory of previously generated
         openpose json files.
@@ -333,9 +337,9 @@ def run_openpose(
                     input_video, output_dir, *crop_rectangle
                 )
                 print(f"Cropped video at {input_video}...")
-            except Exception:
+            except Exception as e:
                 print(
-                    f"Unable to crop video {input_video} with coords {crop_rectangle}."
+                    f"Unable to crop video {input_video} with coords {crop_rectangle}. Error was: {e}"
                 )
                 exit(1)
 

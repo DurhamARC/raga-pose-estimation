@@ -221,13 +221,13 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     )
 
     # Invalid crop parameters
-    for crop_rect in [("top left", 20, 4, 30), (1, 2, 3)]:
+    for crop_rect in [("width", 20, 4, 30), (1, 2, 3)]:
         with pytest.raises(SystemExit):
             run_openpose.run_openpose(
                 output_path,
                 openpose_dir=".",
                 input_video=input_video_path,
-                crop_rectangle=("top left", 20, 4, 30),
+                crop_rectangle=("width", 20, 4, 30),
             )
 
         captured = capsys.readouterr()
@@ -241,14 +241,14 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
             output_path,
             openpose_dir=".",
             input_video=input_video_path,
-            crop_rectangle=(100, 200, 0, 0),
+            crop_rectangle=(100, 200, -100, 0),
         )
 
     captured = capsys.readouterr()
     video_full_path = os.path.join(os.getcwd(), input_video_path)
     assert (
         captured.out == f"Cropping video {video_full_path}...\n"
-        f"Unable to crop video {video_full_path} with coords (100, 200, 0, 0).\n"
+        f"Unable to crop video {video_full_path} with coords (100, 200, -100, 0). Error was: Crop rectangle coordinates must be greater than or equal to 0\n"
     )
 
     # Reset the output path

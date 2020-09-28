@@ -3,21 +3,21 @@ import os
 import ffmpeg
 
 
-def crop_video(input_path, output_dir, x1, y1, x2, y2):
+def crop_video(input_path, output_dir, w, h, x, y):
     """Crops the given input file
 
     Parameters
     ----------
     input_path : str
         Path to input video
-    x1 : int
+    w : int
+        width of cropped rectangle
+    h : int
+        height of cropped rectangle
+    x : int
         x position of top-left of cropped rectangle
-    y1 : int
+    y : int
         y position of top-left of cropped rectangle
-    x2 : int
-        x position of bottom-right of cropped rectangle
-    y2 : int
-        y position of bottom-right of cropped rectangle
 
     Returns
     -------
@@ -26,7 +26,13 @@ def crop_video(input_path, output_dir, x1, y1, x2, y2):
 
     """
     output_filepath = os.path.join(output_dir, "cropped.mp4")
-    ffmpeg.input(input_path).crop(x1, y1, x2 - x1, y2 - y1).output(
-        output_filepath
-    ).run()
+    if w < 1 or h < 1:
+        raise ValueError("Crop width and height must be greater than 0")
+
+    if x < 0 or y < 0:
+        raise ValueError(
+            "Crop rectangle coordinates must be greater than or equal to 0"
+        )
+
+    ffmpeg.input(input_path).crop(x, y, w, h).output(output_filepath).run()
     return output_filepath

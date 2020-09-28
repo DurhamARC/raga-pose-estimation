@@ -48,9 +48,11 @@ Options:
 
   -r, --crop-rectangle INTEGER...
                                   Coordinates of rectangle to crop the video
-                                  before processing, in the form x1,y1,x2,y2
-                                  where (x1,x2) is the top-left of the
-                                  rectangle, and (x2,y2) is the bottom-right.
+                                  before processing, in the form w h x y where
+                                  w and h are the width and height of the
+                                  cropped rectangle and (x,y) is the top-left
+                                  of the rectangle, as measured in pixels from
+                                  the top-left corner.
 
   -n, --number-of-people INTEGER  Number of people to include in output.
   -O, --openpose-dir TEXT         Path to the directory in which openpose is
@@ -104,10 +106,10 @@ Options:
 ### Examples
 
 Run OpenPose on a video to produce output CSVs (1 per person) in the `output` directory
-and an overlay video, cropping the video from (10, 100) to (300, 600):
+and an overlay video, cropping the video to width 720, height 800 from (600, 50):
 
 ```bash
-python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video --crop-rectangle 10 100 300 600
+python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video --crop-rectangle 720 800 600 50
 ```
 
 Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `output` folder, showing only upper body parts, outputting up to 3 people, and using the confidence_threshold and smoothing to improve the output (using short form of arguments):
