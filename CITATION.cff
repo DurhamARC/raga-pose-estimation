@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors: 
+  -
+    affiliation: "Durham University"
+    family-names: Clarke
+    given-names: Alison
+    orcid: "https://orcid.org/0000-0002-0205-6644"
+  -
+    affiliation: "Durham University"
+    family-names: Weinzierl
+    given-names: Marion
+    orcid: "https://orcid.org/0000-0002-2302-5476"
+title: "Pose estimation for Raga"
+version: 1.0.0
+date-released: 2021-08-11
+url: "https://github.com/DurhamARC/raga-pose-estimation"
