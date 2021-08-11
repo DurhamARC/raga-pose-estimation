@@ -5,6 +5,11 @@ import pandas as pd
 from .openpose_parts import OpenPoseParts
 
 
+# Jin modification
+# add one more dimension: (x, y, c) -> (x, y, z, c)
+# add 'z' after the line for 'x' and 'y'
+# change number '3' to '4'
+
 class OpenPoseJsonParser:
     """Parser for JSON files created by OpenPose
 
@@ -24,14 +29,14 @@ class OpenPoseJsonParser:
 
     """
 
-    COLUMN_NAMES = ["x", "y", "confidence"]
+    COLUMN_NAMES = ["x", "y", "z", "confidence"]
     ROW_NAMES = [p.value for p in OpenPoseParts]
 
     def __init__(self, filepath):
-        print(filepath.split('/')[-1])
+        # print(filepath.split('/')[-1])
         with open(filepath) as f:
             self.all_data = json.load(f)
-        print('{} persons are detected'.format(len(self.all_data['people'])))
+        # print('{} persons are detected'.format(len(self.all_data['people'])))
 
     def get_person_count(self):
         """Get the count of the people in the file.
@@ -93,7 +98,7 @@ class OpenPoseJsonParser:
         sorted_body_keypoints_df = pd.DataFrame()
 
         # Find permutation to sort x values in ascending order
-        idx = np.argsort(body_keypoints_df.mean(axis=0).iloc[0::3])
+        idx = np.argsort(body_keypoints_df.mean(axis=0).iloc[0::4])
 
         # Test whether permutation equals just the numbering (1, 2, 3, ...), i.e. whether x values are already sorted.
         if list(range(len(idx))) == list(idx):
@@ -109,6 +114,8 @@ class OpenPoseJsonParser:
                 xname_old = "x" + str(idx[i])
                 yname = "y" + str(i)
                 yname_old = "y" + str(idx[i])
+                zname = "z" + str(i)
+                zname_old = "z" + str(idx[i])
 
                 sorted_body_keypoints_df = sorted_body_keypoints_df.join(
                     body_keypoints_df[[xname_old]], how="right", rsuffix="new"
@@ -117,22 +124,31 @@ class OpenPoseJsonParser:
                     body_keypoints_df[[yname_old]], how="right", rsuffix="new"
                 )
                 sorted_body_keypoints_df = sorted_body_keypoints_df.join(
+                    body_keypoints_df[[zname_old]], how="right", rsuffix="new"
+                )
+                sorted_body_keypoints_df = sorted_body_keypoints_df.join(
                     body_keypoints_df[[cname_old]], how="right", rsuffix="new"
                 )
 
                 sorted_body_keypoints_df.rename(
-                    columns={sorted_body_keypoints_df.columns[i * 3]: xname},
+                    columns={sorted_body_keypoints_df.columns[i * 4]: xname},
                     inplace=True,
                 )
                 sorted_body_keypoints_df.rename(
                     columns={
-                        sorted_body_keypoints_df.columns[i * 3 + 1]: yname
+                        sorted_body_keypoints_df.columns[i * 4 + 1]: yname
                     },
                     inplace=True,
                 )
                 sorted_body_keypoints_df.rename(
                     columns={
-                        sorted_body_keypoints_df.columns[i * 3 + 2]: cname
+                        sorted_body_keypoints_df.columns[i * 4 + 2]: zname
+                    },
+                    inplace=True,
+                )
+                sorted_body_keypoints_df.rename(
+                    columns={
+                        sorted_body_keypoints_df.columns[i * 4 + 3]: cname
                     },
                     inplace=True,
                 )
@@ -180,12 +196,12 @@ class OpenPoseJsonParser:
                     column_names.append(c + str(i))
 
                 person_keypoints = self.all_data["people"][pi][
-                    "pose_keypoints_2d"
+                    "pose_keypoints_3d"
                 ]
                 np_keypoints = np.array(person_keypoints)
                 # Reshape to rows of x,y,confidence
                 np_v_reshape = np_keypoints.reshape(
-                    int(len(np_keypoints) / 3), 3
+                    int(len(np_keypoints) / 4), 4
                 )
 
                 # Place in dataframe
@@ -220,10 +236,11 @@ class OpenPoseJsonParser:
         ):
             for row in body_keypoints_df.itertuples():
 
-                for p in range(int(len(body_keypoints_df.columns) / 3)):
+                for p in range(int(len(body_keypoints_df.columns) / 4)):
                     cname = "confidence" + str(p)
                     xname = "x" + str(p)
                     yname = "y" + str(p)
+                    zname = "z" + str(p)
 
                     if row.Index in previous_body_keypoints_df.index:
 
@@ -246,6 +263,11 @@ class OpenPoseJsonParser:
                                 row.Index, yname
                             ] = previous_body_keypoints_df.loc[
                                 row.Index, yname
+                            ]
+                            body_keypoints_df.loc[
+                                row.Index, zname
+                            ] = previous_body_keypoints_df.loc[
+                                row.Index, zname
                             ]
                             body_keypoints_df.loc[
                                 row.Index, cname

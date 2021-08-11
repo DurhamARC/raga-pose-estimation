@@ -67,3 +67,58 @@ class OpenPosePartGroups:
         OpenPoseParts.R_SMALL_TOE,
         OpenPoseParts.R_HEEL,
     ]
+
+# Jin modification
+# and HandPoseParts
+
+class HandPoseParts(Enum):
+    """
+    Enum with body parts in order defined by OpenPose.
+    (We could get these from OpenPose, but defining them here means we can work
+    on machines where OpenPose is not installed.)
+    """
+    
+    L_WRIST = 'LWrist'
+    L_THUMB1 = 'LThumb1'
+    L_THUMB2 = 'LThumb2'
+    L_THUMB3 = 'LThumb3'
+    L_THUMB4 = 'LThumb4'
+    L_INDEX1 = 'LIndex1'
+    L_INDEX2 = 'LIndex2'
+    L_INDEX3 = 'LIndex3'
+    L_INDEX4 = 'LIndex4'
+    L_MIDDLE1 = 'LMiddle1'
+    L_MIDDLE2 = 'LMiddle2'
+    L_MIDDLE3 = 'LMiddle3'
+    L_MIDDLE4 = 'LMiddle4'
+    L_RING1 = 'LRing1'
+    L_RING2 = 'LRing2'
+    L_RING3 = 'LRing3'
+    L_RING4 = 'LRing4'
+    L_LITTLE1 = 'LLittle1'
+    L_LITTLE2 = 'LLittle2'
+    L_LITTLE3 = 'LLittle3'
+    L_LITTLE4 = 'LLittle4'
+    
+    R_WRIST = 'RWrist'
+    R_THUMB1 = 'RThumb1'
+    R_THUMB2 = 'RThumb2'
+    R_THUMB3 = 'RThumb3'
+    R_THUMB4 = 'RThumb4'
+    R_INDEX1 = 'RIndex1'
+    R_INDEX2 = 'RIndex2'
+    R_INDEX3 = 'RIndex3'
+    R_INDEX4 = 'RIndex4'
+    R_MIDDLE1 = 'RMiddle1'
+    R_MIDDLE2 = 'RMiddle2'
+    R_MIDDLE3 = 'RMiddle3'
+    R_MIDDLE4 = 'RMiddle4'
+    R_RING1 = 'RRing1'
+    R_RING2 = 'RRing2'
+    R_RING3 = 'RRing3'
+    R_RING4 = 'RRing4'
+    R_LITTLE1 = 'RLittle1'
+    R_LITTLE2 = 'RLittle2'
+    R_LITTLE3 = 'RLittle3'
+    R_LITTLE4 = 'RLittle4'
+    

@@ -170,49 +170,65 @@ class OpenPoseJsonParser:
             confidence0, x1, y1, confidence1
 
         """
+        ### Jin modification
+        ### The person_indeces is removed
+        ### We can automatically match the skeleton in current frame with that in the previous frame
+        
+        
         column_names = []
         body_keypoints_df = pd.DataFrame()
 
-        for i in range(len(person_indices)):
-            pi = person_indices[i]
-            if pi < self.get_person_count():
-                for c in self.COLUMN_NAMES:
-                    column_names.append(c + str(i))
+        for i in range(len(self.all_data['people'])):
 
-                person_keypoints = self.all_data["people"][pi][
-                    "pose_keypoints_2d"
-                ]
-                np_keypoints = np.array(person_keypoints)
-                # Reshape to rows of x,y,confidence
-                np_v_reshape = np_keypoints.reshape(
-                    int(len(np_keypoints) / 3), 3
-                )
+            person_keypoints = self.all_data["people"][i][
+                "pose_keypoints_2d"
+            ]
+            np_keypoints = np.array(person_keypoints)
+            # Reshape to rows of x,y,confidence
+            np_v_reshape = np_keypoints.reshape(
+                int(len(np_keypoints) / 3), 3
+            )
 
-                # Place in dataframe
-                person_df = pd.DataFrame(np_v_reshape)
+            # Place in dataframe
+            person_df = pd.DataFrame(np_v_reshape)
 
-                # Check if x, y, confidence are all 0, and replace with nulls
+            # Check if x, y, confidence are all 0, and replace with nulls
+            
+            def replace_zeros(row):
+                if (row == 0).all():
+                    return np.nan
+                else:
+                    return row
+            
+            if (person_df.iloc[0]==0).all():
+                person_df.iloc[0] = np.nan
                 
-                def replace_zeros(row):
-                    if (row == 0).all():
-                        return np.nan
-                    else:
-                        return row
-                
-                if (person_df.iloc[0]==0).all():
-                    person_df.iloc[0] = np.nan
-                    
-                person_df = person_df.apply(
-                    lambda row: replace_zeros(row), axis=1
-                )
+            person_df = person_df.apply(
+                lambda row: replace_zeros(row), axis=1
+            )
 
-                body_keypoints_df = pd.concat(
-                    [body_keypoints_df, person_df], axis=1
-                )
-
-        body_keypoints_df.columns = column_names
-        body_keypoints_df.index = self.ROW_NAMES
-
+            body_keypoints_df = pd.concat(
+                [body_keypoints_df, person_df], axis=1
+            )
+        
+        
+        
+        for p in range(int(len(body_keypoints_df.columns) / 3)):
+            cname = "confidence" + str(p)
+            xname = "x" + str(p)
+            yname = "y" + str(p)
+            column_names.append(xname)
+            column_names.append(yname)
+            column_names.append(cname)
+        
+        if len(body_keypoints_df) == 0 and not previous_body_keypoints_df is None:
+            body_keypoints_df = previous_body_keypoints_df
+        else:            
+            body_keypoints_df.columns = column_names
+            body_keypoints_df.index = self.ROW_NAMES
+        
+        body_keypoints_df = match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=parts)
+        
         # Check whether previous frame had higher confidence points and replace
         if (
             not previous_body_keypoints_df is None
@@ -258,3 +274,126 @@ class OpenPoseJsonParser:
             body_keypoints_df = body_keypoints_df.loc[part_names]
 
         return body_keypoints_df
+
+## Jin modification
+def match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=None, distance_thres=50):
+    '''
+
+    Parameters
+    ----------
+    body_keypoints_df : dataframe
+        data frame of current frame in video, if existent.
+            Default is None.
+            
+    previous_body_keypoints_df : dataframe
+        data frame of previous frame in video, if existent.
+            Default is None.
+            
+    parts : array of OpenPoseParts
+            Array of parts to include in returned dataframe. Defaults to None,
+            which shows all parts.
+            
+    distance_thres : int
+        the threshold of mean distance to identify two skeletons into the same person. 
+        The default is 50.
+
+    Returns
+    -------
+    body_keypoints_df : TYPE
+        DESCRIPTION.
+
+    '''
+    # if detection is unrealable (too much NaN), then delete this person
+    if previous_body_keypoints_df is None:
+        for name in body_keypoints_df:
+            if len(np.where(np.isnan(body_keypoints_df[name]))[0]) >= 20:
+                body_keypoints_df = body_keypoints_df.drop(columns=[name])
+        
+    # rename the columns according to current number of persons
+        column_names = []        
+        for p in range(int(len(body_keypoints_df.columns) / 3)):
+            cname = "confidence" + str(p)
+            xname = "x" + str(p)
+            yname = "y" + str(p)
+            column_names.append(xname)
+            column_names.append(yname)
+            column_names.append(cname)
+        body_keypoints_df.columns = column_names
+        
+            
+    
+    # if the detected person is more than previous (anchor), compute best matches 
+    if (
+        not previous_body_keypoints_df is None
+        and len(body_keypoints_df.keys()) != len(previous_body_keypoints_df.keys())
+    ):
+        if parts:
+            part_names = [x.value for x in parts]
+            body_keypoints_df = body_keypoints_df.loc[part_names]
+        body_keypoints_df_new = pd.DataFrame()
+        for p in range(int(len(previous_body_keypoints_df.columns) / 3)):
+            dist_list = []
+            xname = "x" + str(p)
+            yname = "y" + str(p)
+            person1 = np.array(previous_body_keypoints_df[[xname,yname]])
+            for q in range(int(len(body_keypoints_df.columns) / 3)):
+                xname = "x" + str(q)
+                yname = "y" + str(q)
+                person2 = np.array(body_keypoints_df[[xname,yname]])
+                dist_list.append(mean_body_distance(person1, person2))
+            current_person_id = np.argmin(dist_list)
+            
+            if dist_list[current_person_id] < distance_thres:
+                new_person_id = int(len(body_keypoints_df_new.columns)/3)
+                body_keypoints_df_new["x"+str(new_person_id)] = \
+                    body_keypoints_df["x"+str(current_person_id)]
+                body_keypoints_df_new["y"+str(new_person_id)] = \
+                    body_keypoints_df["y"+str(current_person_id)]
+                body_keypoints_df_new["confidence"+str(new_person_id)] = \
+                    body_keypoints_df["confidence"+str(current_person_id)]
+                
+            else:
+                new_person_id = int(len(body_keypoints_df_new.columns)/3)
+                body_keypoints_df_new["x"+str(new_person_id)] = \
+                    previous_body_keypoints_df["x"+str(p)]
+                body_keypoints_df_new["y"+str(new_person_id)] = \
+                    previous_body_keypoints_df["y"+str(p)]
+                body_keypoints_df_new["confidence"+str(new_person_id)] = \
+                    previous_body_keypoints_df["confidence"+str(p)]
+        
+        column_names = []
+        for p in range(int(len(body_keypoints_df_new.columns) / 3)):
+            cname = "confidence" + str(p)
+            xname = "x" + str(p)
+            yname = "y" + str(p)
+            column_names.append(xname)
+            column_names.append(yname)
+            column_names.append(cname)
+        body_keypoints_df_new.columns = column_names
+        body_keypoints_df = body_keypoints_df_new
+    
+    return body_keypoints_df
+                                   
+
+def mean_body_distance(person1, person2):
+    '''
+
+    Parameters
+    ----------
+    person1 : 25x2 np.array
+    person2 : 25x2 np.array
+
+    Returns
+    -------
+    distance : np.float 
+
+    '''
+    distances = np.sum((person1-person2)**2, axis=1)**0.5
+    num_idx = np.where(~np.isnan(distances))[0]
+    distance = np.mean(distances[num_idx])
+    return distance
+    
+                    
+                    
+                    
+                
