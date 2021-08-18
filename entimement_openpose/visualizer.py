@@ -1,8 +1,6 @@
 import os
-
 import cv2
 import numpy as np
-
 from .openpose_parts import OpenPoseParts
 
 

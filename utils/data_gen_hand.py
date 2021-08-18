@@ -26,10 +26,10 @@ RAGA = [
 ]
 MUSICIAN = ["AG", "CC", "SCh"]
 
+
 # read and normalise CSV file to the dataframe format
 def read_csv(filename):
     """
-
     Parameters
     ----------
     filename : str
@@ -39,7 +39,6 @@ def read_csv(filename):
     -------
     df_new : dataframe
         Normalised coordinates of 3D pose.
-
     """
     dataframe = pd.read_csv(filename, index_col="Body Part")
     # find the bbox of the player for crop
