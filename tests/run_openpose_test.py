@@ -45,7 +45,7 @@ def test_run_openpose(output_path):
         assert os.path.isfile(filename)
         size = os.path.getsize(filename)
         if f == video_files[0]:
-            assert size > 1000000 and size < 10000000
+            assert size > 100000 and size < 10000000
         else:
             assert size > 100000 and size < 1000000
 
