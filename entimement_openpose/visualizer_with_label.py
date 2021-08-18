@@ -149,11 +149,7 @@ class Visualizer:
                 pts = pts.reshape((-1, 1, 2))
 
                 cv2.polylines(
-                    img,
-                    [pts],
-                    False,
-                    Visualizer.LINE_COLOR,
-                    thickness=4,
+                    img, [pts], False, Visualizer.LINE_COLOR, thickness=4,
                 )
 
     def get_paths_from_dataframe(person_df):
