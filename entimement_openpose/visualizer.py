@@ -146,7 +146,11 @@ class Visualizer:
                 pts = pts.reshape((-1, 1, 2))
 
                 cv2.polylines(
-                    img, [pts], False, Visualizer.LINE_COLOR, thickness=2,
+                    img,
+                    [pts],
+                    False,
+                    Visualizer.LINE_COLOR,
+                    thickness=2,
                 )
 
     def get_paths_from_dataframe(person_df):
@@ -213,7 +217,7 @@ class Visualizer:
 
         paths = Visualizer.get_paths_from_dataframe(person_dfs[0])
 
-        fourcc = cv2.VideoWriter_fourcc('m','p','4','v')
+        fourcc = cv2.VideoWriter_fourcc("m", "p", "4", "v")
         name = "overlay" if create_overlay else "blank"
         filename = os.path.join(
             self.output_directory, "%s_%s.mp4" % (file_basename, name)

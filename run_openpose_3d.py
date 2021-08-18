@@ -4,12 +4,14 @@ import click
 import cv2
 
 from entimement_openpose.csv_writer import write_csv
+
 # load OpenPoseJsonParser from new file
 from entimement_openpose.openpose_json_parser_3d import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
 )
+
 # load reshape_dataframes from new file
 from entimement_openpose.reshaper_3d import reshape_dataframes
 from entimement_openpose.smoother import Smoother
@@ -160,7 +162,7 @@ def openpose_cli(
     flatten,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
-       files. See cli docs for parameter details."""
+    files. See cli docs for parameter details."""
     body_parts_list = None
     if body_parts:
         try:
@@ -416,11 +418,11 @@ def run_openpose(
         print("Smoothing output...")
         smoother = Smoother(*smoothing_parameters)
         person_dfs = smoother.smooth(person_dfs)
-    
+
     print(f"Saving CSVs to {output_dir}...")
     write_csv(person_dfs, output_dir, flatten=flatten)
     print("Done.")
-    
+
     if create_model_video or create_overlay_video:
         if not width or not height:
             cap = cv2.VideoCapture(input_video)

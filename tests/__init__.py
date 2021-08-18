@@ -8,9 +8,21 @@ from entimement_openpose.reshaper import reshape_dataframes
 
 def _get_dummy_dataframes():
     data = [
-        {"x": [2, 15], "y": [8, 5], "confidence": [0.1, 0.8],},
-        {"x": [3, 10], "y": [5, 4], "confidence": [0.5, 0.9],},
-        {"x": [4, np.nan], "y": [4, np.nan], "confidence": [0.7, np.nan],},
+        {
+            "x": [2, 15],
+            "y": [8, 5],
+            "confidence": [0.1, 0.8],
+        },
+        {
+            "x": [3, 10],
+            "y": [5, 4],
+            "confidence": [0.5, 0.9],
+        },
+        {
+            "x": [4, np.nan],
+            "y": [4, np.nan],
+            "confidence": [0.7, np.nan],
+        },
     ]
     dataframes = []
     for d in data:
@@ -19,7 +31,10 @@ def _get_dummy_dataframes():
                 d,
                 columns=["x", "y", "confidence"],
                 index=pd.Index(
-                    [OpenPoseParts.R_EAR.value, OpenPoseParts.R_EYE.value,]
+                    [
+                        OpenPoseParts.R_EAR.value,
+                        OpenPoseParts.R_EYE.value,
+                    ]
                 ),
             )
         )

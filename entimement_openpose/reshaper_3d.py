@@ -2,7 +2,7 @@ import pandas as pd
 
 # Jin modification
 # add one dimension: (x, y, c) -> (x, y, z, c)
- 
+
 
 def reshape_dataframes(dataframes):
     """Combines the dataframes per frame into a dataframe per person

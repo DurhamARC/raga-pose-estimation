@@ -4,8 +4,11 @@ import click
 import cv2
 
 from entimement_openpose.csv_writer import write_csv
+
 # load OpenPoseJsonParser from a new file
-from entimement_openpose.openpose_json_parser_adaptive import OpenPoseJsonParser
+from entimement_openpose.openpose_json_parser_adaptive import (
+    OpenPoseJsonParser,
+)
 from entimement_openpose.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
@@ -13,6 +16,7 @@ from entimement_openpose.openpose_parts import (
 from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.video_utils import crop_video
+
 # load visualizer from a new file
 from entimement_openpose.visualizer_with_label import Visualizer
 
@@ -160,7 +164,7 @@ def openpose_cli(
     flatten,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
-       files. See cli docs for parameter details."""
+    files. See cli docs for parameter details."""
     body_parts_list = None
     if body_parts:
         try:
@@ -408,7 +412,7 @@ def run_openpose(
         body_keypoints_df = parser.sort_persons_by_x_position(
             body_keypoints_df
         )
-                
+
         body_keypoints_df.reset_index()
         body_keypoints_dfs.append(body_keypoints_df)
         previous_body_keypoints_df = body_keypoints_df
@@ -419,11 +423,11 @@ def run_openpose(
         print("Smoothing output...")
         smoother = Smoother(*smoothing_parameters)
         person_dfs = smoother.smooth(person_dfs)
-    
+
     print(f"Saving CSVs to {output_dir}...")
     write_csv(person_dfs, output_dir, flatten=flatten)
     print("Done.")
-    
+
     if create_model_video or create_overlay_video:
         if not width or not height:
             cap = cv2.VideoCapture(input_video)
@@ -450,7 +454,7 @@ def run_openpose(
                 video_to_overlay=input_video,
             )
 
-    
+
 # debugfile('/Users/jinli/code/openpose-music/run_openpose_Jin.py', args='-j data/JSON/NIR_SCh_Malhar_SideL_StereoMix/json -v data/video_group/NIR_SCh_Malhar_SideL_StereoMix.mp4 -o output/video_group/NIR_SCh_Malhar_SideL_StereoMix -u -V -n 10 -c 0.7 -s 13 2', wdir='/Users/jinli/code/openpose-music')
 
 if __name__ == "__main__":

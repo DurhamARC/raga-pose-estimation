@@ -28,10 +28,10 @@ class OpenPoseJsonParser:
     ROW_NAMES = [p.value for p in HandPoseParts]
 
     def __init__(self, filepath):
-        print(filepath.split('/')[-1])
+        print(filepath.split("/")[-1])
         with open(filepath) as f:
             self.all_data = json.load(f)
-        print('{} persons are detected'.format(len(self.all_data['people'])))
+        print("{} persons are detected".format(len(self.all_data["people"])))
 
     def get_person_count(self):
         """Get the count of the people in the file.
@@ -94,10 +94,10 @@ class OpenPoseJsonParser:
 
         # Find permutation to sort x values in ascending order
         idx = np.argsort(body_keypoints_df.mean(axis=0).iloc[0::3])
-        
+
         if np.where(~np.isnan(body_keypoints_df))[0].shape[0] == 0:
             return body_keypoints_df
-        
+
         # Test whether permutation equals just the numbering (1, 2, 3, ...), i.e. whether x values are already sorted.
         if list(range(len(idx))) == list(idx):
             sorted_body_keypoints_df = sorted_body_keypoints_df.join(
@@ -176,41 +176,35 @@ class OpenPoseJsonParser:
         column_names = []
         body_keypoints_df = pd.DataFrame()
 
-        for i in range(len(self.all_data['people'])):
+        for i in range(len(self.all_data["people"])):
 
             person_keypoints = self.all_data["people"][i][
                 "hand_left_keypoints_2d"
             ]
             np_keypoints = np.array(person_keypoints)
             # Reshape to rows of x,y,confidence
-            np_v_reshape = np_keypoints.reshape(
-                int(len(np_keypoints) / 3), 3
-            )
+            np_v_reshape = np_keypoints.reshape(int(len(np_keypoints) / 3), 3)
 
             # Place in dataframe
             person_df = pd.DataFrame(np_v_reshape)
 
             # Check if x, y, confidence are all 0, and replace with nulls
-            
+
             def replace_zeros(row):
                 if (row == 0).all():
                     return np.nan
                 else:
                     return row
-            
-            if (person_df.iloc[0]==0).all():
+
+            if (person_df.iloc[0] == 0).all():
                 person_df.iloc[0] = np.nan
-                
-            person_df = person_df.apply(
-                lambda row: replace_zeros(row), axis=1
-            )
+
+            person_df = person_df.apply(lambda row: replace_zeros(row), axis=1)
 
             body_keypoints_df = pd.concat(
                 [body_keypoints_df, person_df], axis=1
             )
-        
-        
-        
+
         for p in range(int(len(body_keypoints_df.columns) / 3)):
             cname = "confidence" + str(p)
             xname = "x" + str(p)
@@ -218,15 +212,20 @@ class OpenPoseJsonParser:
             column_names.append(xname)
             column_names.append(yname)
             column_names.append(cname)
-        
-        if len(body_keypoints_df) == 0 and not previous_body_keypoints_df is None:
+
+        if (
+            len(body_keypoints_df) == 0
+            and not previous_body_keypoints_df is None
+        ):
             body_keypoints_df = previous_body_keypoints_df
-        else:            
+        else:
             body_keypoints_df.columns = column_names
             body_keypoints_df.index = self.ROW_NAMES
-        
-        body_keypoints_df = match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=parts)
-        
+
+        body_keypoints_df = match_previous_df(
+            body_keypoints_df, previous_body_keypoints_df, parts=parts
+        )
+
         # Check whether previous frame had higher confidence points and replace
         if (
             not previous_body_keypoints_df is None
@@ -239,8 +238,7 @@ class OpenPoseJsonParser:
                     yname = "y" + str(p)
 
                     if row.Index in previous_body_keypoints_df.index:
-                        
-                        
+
                         body_keypoints_df = self.sort_persons_by_x_position(
                             body_keypoints_df
                         )
@@ -273,27 +271,33 @@ class OpenPoseJsonParser:
 
         return body_keypoints_df
 
+
 # Jin modification
-# 
-def match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=None, distance_thres=50):
-    '''
+#
+def match_previous_df(
+    body_keypoints_df,
+    previous_body_keypoints_df,
+    parts=None,
+    distance_thres=50,
+):
+    """
 
     Parameters
     ----------
     body_keypoints_df : dataframe
         data frame of current frame in video, if existent.
             Default is None.
-            
+
     previous_body_keypoints_df : dataframe
         data frame of previous frame in video, if existent.
             Default is None.
-            
+
     parts : array of OpenPoseParts
             Array of parts to include in returned dataframe. Defaults to None,
             which shows all parts.
-            
+
     distance_thres : int
-        the threshold of mean distance to identify two skeletons into the same person. 
+        the threshold of mean distance to identify two skeletons into the same person.
         The default is 50.
 
     Returns
@@ -301,15 +305,15 @@ def match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=None,
     body_keypoints_df : TYPE
         DESCRIPTION.
 
-    '''
+    """
     # if detection is unrealable (too much NaN), then delete this person
     if previous_body_keypoints_df is None:
         for name in body_keypoints_df:
             if len(np.where(np.isnan(body_keypoints_df[name]))[0]) >= 20:
                 body_keypoints_df = body_keypoints_df.drop(columns=[name])
-        
-    # rename the columns according to current number of persons
-        column_names = []        
+
+        # rename the columns according to current number of persons
+        column_names = []
         for p in range(int(len(body_keypoints_df.columns) / 3)):
             cname = "confidence" + str(p)
             xname = "x" + str(p)
@@ -318,13 +322,11 @@ def match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=None,
             column_names.append(yname)
             column_names.append(cname)
         body_keypoints_df.columns = column_names
-        
-    
-    # if the detected person is more than previous (anchor), compute best matches 
-    if (
-        not previous_body_keypoints_df is None
-        and len(body_keypoints_df.keys()) != len(previous_body_keypoints_df.keys())
-    ):
+
+    # if the detected person is more than previous (anchor), compute best matches
+    if not previous_body_keypoints_df is None and len(
+        body_keypoints_df.keys()
+    ) != len(previous_body_keypoints_df.keys()):
         if parts:
             part_names = [x.value for x in parts]
             body_keypoints_df = body_keypoints_df.loc[part_names]
@@ -333,32 +335,38 @@ def match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=None,
             dist_list = []
             xname = "x" + str(p)
             yname = "y" + str(p)
-            person1 = np.array(previous_body_keypoints_df[[xname,yname]])
+            person1 = np.array(previous_body_keypoints_df[[xname, yname]])
             for q in range(int(len(body_keypoints_df.columns) / 3)):
                 xname = "x" + str(q)
                 yname = "y" + str(q)
-                person2 = np.array(body_keypoints_df[[xname,yname]])
+                person2 = np.array(body_keypoints_df[[xname, yname]])
                 dist_list.append(mean_body_distance(person1, person2))
             current_person_id = np.argmin(dist_list)
-            
+
             if dist_list[current_person_id] < distance_thres:
-                new_person_id = int(len(body_keypoints_df_new.columns)/3)
-                body_keypoints_df_new["x"+str(new_person_id)] = \
-                    body_keypoints_df["x"+str(current_person_id)]
-                body_keypoints_df_new["y"+str(new_person_id)] = \
-                    body_keypoints_df["y"+str(current_person_id)]
-                body_keypoints_df_new["confidence"+str(new_person_id)] = \
-                    body_keypoints_df["confidence"+str(current_person_id)]
-                
+                new_person_id = int(len(body_keypoints_df_new.columns) / 3)
+                body_keypoints_df_new[
+                    "x" + str(new_person_id)
+                ] = body_keypoints_df["x" + str(current_person_id)]
+                body_keypoints_df_new[
+                    "y" + str(new_person_id)
+                ] = body_keypoints_df["y" + str(current_person_id)]
+                body_keypoints_df_new[
+                    "confidence" + str(new_person_id)
+                ] = body_keypoints_df["confidence" + str(current_person_id)]
+
             else:
-                new_person_id = int(len(body_keypoints_df_new.columns)/3)
-                body_keypoints_df_new["x"+str(new_person_id)] = \
-                    previous_body_keypoints_df["x"+str(p)]
-                body_keypoints_df_new["y"+str(new_person_id)] = \
-                    previous_body_keypoints_df["y"+str(p)]
-                body_keypoints_df_new["confidence"+str(new_person_id)] = \
-                    previous_body_keypoints_df["confidence"+str(p)]
-        
+                new_person_id = int(len(body_keypoints_df_new.columns) / 3)
+                body_keypoints_df_new[
+                    "x" + str(new_person_id)
+                ] = previous_body_keypoints_df["x" + str(p)]
+                body_keypoints_df_new[
+                    "y" + str(new_person_id)
+                ] = previous_body_keypoints_df["y" + str(p)]
+                body_keypoints_df_new[
+                    "confidence" + str(new_person_id)
+                ] = previous_body_keypoints_df["confidence" + str(p)]
+
         column_names = []
         for p in range(int(len(body_keypoints_df_new.columns) / 3)):
             cname = "confidence" + str(p)
@@ -369,12 +377,12 @@ def match_previous_df(body_keypoints_df, previous_body_keypoints_df, parts=None,
             column_names.append(cname)
         body_keypoints_df_new.columns = column_names
         body_keypoints_df = body_keypoints_df_new
-    
+
     return body_keypoints_df
-                                   
+
 
 def mean_body_distance(person1, person2):
-    '''
+    """
 
     Parameters
     ----------
@@ -383,15 +391,10 @@ def mean_body_distance(person1, person2):
 
     Returns
     -------
-    distance : np.float 
+    distance : np.float
 
-    '''
-    distances = np.sum((person1-person2)**2, axis=1)**0.5
+    """
+    distances = np.sum((person1 - person2) ** 2, axis=1) ** 0.5
     num_idx = np.where(~np.isnan(distances))[0]
     distance = np.mean(distances[num_idx])
     return distance
-    
-                    
-                    
-                    
-                

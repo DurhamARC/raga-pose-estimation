@@ -10,6 +10,7 @@ from .openpose_parts import OpenPoseParts
 # add 'z' after the line for 'x' and 'y'
 # change number '3' to '4'
 
+
 class OpenPoseJsonParser:
     """Parser for JSON files created by OpenPose
 
@@ -208,16 +209,16 @@ class OpenPoseJsonParser:
                 person_df = pd.DataFrame(np_v_reshape)
 
                 # Check if x, y, confidence are all 0, and replace with nulls
-                
+
                 def replace_zeros(row):
                     if (row == 0).all():
                         return np.nan
                     else:
                         return row
-                
-                if (person_df.iloc[0]==0).all():
+
+                if (person_df.iloc[0] == 0).all():
                     person_df.iloc[0] = np.nan
-                    
+
                 person_df = person_df.apply(
                     lambda row: replace_zeros(row), axis=1
                 )

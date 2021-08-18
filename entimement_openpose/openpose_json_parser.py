@@ -28,10 +28,10 @@ class OpenPoseJsonParser:
     ROW_NAMES = [p.value for p in OpenPoseParts]
 
     def __init__(self, filepath):
-        print(filepath.split('/')[-1])
+        print(filepath.split("/")[-1])
         with open(filepath) as f:
             self.all_data = json.load(f)
-        print('{} persons are detected'.format(len(self.all_data['people'])))
+        print("{} persons are detected".format(len(self.all_data["people"])))
 
     def get_person_count(self):
         """Get the count of the people in the file.
@@ -192,16 +192,16 @@ class OpenPoseJsonParser:
                 person_df = pd.DataFrame(np_v_reshape)
 
                 # Check if x, y, confidence are all 0, and replace with nulls
-                
+
                 def replace_zeros(row):
                     if (row == 0).all():
                         return np.nan
                     else:
                         return row
-                
-                if (person_df.iloc[0]==0).all():
+
+                if (person_df.iloc[0] == 0).all():
                     person_df.iloc[0] = np.nan
-                    
+
                 person_df = person_df.apply(
                     lambda row: replace_zeros(row), axis=1
                 )

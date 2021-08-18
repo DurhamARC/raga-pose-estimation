@@ -158,7 +158,7 @@ def openpose_cli(
     flatten,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
-       files. See cli docs for parameter details."""
+    files. See cli docs for parameter details."""
     body_parts_list = None
     if body_parts:
         try:

@@ -18,7 +18,12 @@ def test_crop_video():
     x = 200
     y = 300
     output_path = crop_video(
-        "example_files/example_1person/short_video.mp4", "output", w, h, x, y,
+        "example_files/example_1person/short_video.mp4",
+        "output",
+        w,
+        h,
+        x,
+        y,
     )
     assert output_path == output_filename
 
