@@ -7,6 +7,8 @@ from matplotlib import pyplot as plt
 from .openpose_parts import OpenPoseParts
 
 
+### could add signal light when creating the video ####
+
 class Visualizer:
     """Class providing visualization of OpenPose data from a DataFrame"""
 

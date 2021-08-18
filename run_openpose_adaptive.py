@@ -5,7 +5,7 @@ import cv2
 
 from entimement_openpose.csv_writer import write_csv
 # load OpenPoseJsonParser from a new file
-from entimement_openpose.openpose_json_parser_Jin import OpenPoseJsonParser
+from entimement_openpose.openpose_json_parser_adaptive import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
@@ -14,7 +14,7 @@ from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.video_utils import crop_video
 # load visualizer from a new file
-from entimement_openpose.visualizer_Jin import Visualizer
+from entimement_openpose.visualizer_with_label import Visualizer
 
 
 @click.command()

@@ -12,7 +12,7 @@ from entimement_openpose.reshaper import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.video_utils import crop_video
 # load Visualizer from new file
-from entimement_openpose.visualizer_Jin import Visualizer
+from entimement_openpose.visualizer_with_label import Visualizer
 
 
 @click.command()

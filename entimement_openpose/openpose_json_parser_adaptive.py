@@ -4,6 +4,7 @@ import pandas as pd
 
 from .openpose_parts import OpenPoseParts
 
+### adaptive detect the number of singer in the video #####
 
 class OpenPoseJsonParser:
     """Parser for JSON files created by OpenPose

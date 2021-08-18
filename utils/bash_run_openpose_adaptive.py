@@ -5,6 +5,7 @@ import os
 ##################################################################
 ##                                                              ##
 ##    create csv (smoothing jsons) for all 2d pose videos       ##
+##    do not need to input the number of people in the videos   ##
 ##                                                              ##
 ##################################################################
 
@@ -12,7 +13,7 @@ def create_overlay(input_video_path, input_json_path, output_path):
     if os.path.exists(output_path):
         print('video exists, skip')
     else:
-        command = 'python3 run_openpose_Jin.py -j' + input_json_path
+        command = 'python3 run_openpose_adaptive.py -j' + input_json_path
         command += ' -v ' + input_video_path
         command += ' -o ' + output_path
         command += ' -u -V -c 0.7 -s 13 2'
