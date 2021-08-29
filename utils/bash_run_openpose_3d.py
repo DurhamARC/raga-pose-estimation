@@ -9,7 +9,7 @@ import os
 ##################################################################
 
 # select a dir with all json files
-json_dir = "../data/JSON_hand/"
+json_dir = "../data/JSON_3d/"
 names = os.listdir(json_dir)
 for name in names:
     if name == ".DS_Store":
@@ -18,7 +18,7 @@ for name in names:
     # path for the json dir
     input_json = json_dir + name + "/json"
     # output path
-    output_json = "../output/video_hand/" + name
+    output_json = "../output/video_3d/" + name
     if os.path.exists(output_json):
         print("{} exists, skip".format(output_json))
     else:
@@ -26,14 +26,10 @@ for name in names:
         print("output csv into {}".format(output_json))
         # run the bash command
         command = (
-            "python3 ../run_openpose_hand.py -j "
+            "python3 ../run_openpose_3d.py -j "
             + input_json
             + " -o "
             + output_json
         )
-        command += " -u -c 0.7 -n 2 -s 13 2"
+        command += " -u -c 0.7 -s 13 2"
         os.system(command)
-
-
-# os.system(command)
-# command = 'runfile('

@@ -189,3 +189,7 @@ which in table form looks like:
 |---|----------|----------|-----------|----------|----------|-----------|
 | 0 | 977\.627 | 285\.955 | 0\.907646 | 910\.046 | 271\.252 | 0\.92357  |
 | 1 | 974\.83  | 286\.009 | 0\.910094 | 909\.925 | 271\.277 | 0\.925763 |
+
+## Other details
+The files with suffix like '_3d' and '_adaptive' correspond to the process of specific pose data. 
+The folder 'utils' includes some useful tools to process the data. Please find more details from 'utils/README.md'.

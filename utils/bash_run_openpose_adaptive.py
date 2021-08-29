@@ -35,7 +35,3 @@ if __name__ == "__main__":
         input_json_path = "../data/JSON/" + video[:-4] + "/json"
         output_path = output_dir + video
         create_overlay(input_video_path, input_json_path, output_path)
-
-
-# command = 'ffmpeg -ss 00:00:15 -t 00:00:05 -i output/overlay_with_sound/AG_1a_Jaun.mp4 -vcodec copy -acodec copy output/clip.mp4'
-# os.system(command)
