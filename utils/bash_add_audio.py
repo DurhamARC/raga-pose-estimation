@@ -38,16 +38,16 @@ def add_audio(input_video_path, input_audio_path, output_video_path):
 
 
 if __name__ == "__main__":
-    video_list = os.listdir("../data/Video_overlay_rest_resize/")
-    output_dir = "../output/overlay_rest_with_sound/"
+    video_list = os.listdir("../data/Video_overlay/")
+    output_dir = "../output/Video_overlay_with_sound/"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     for ii, video in enumerate(video_list):
         if video == ".DS_Store":
             continue
 
-        input_video_path = "../data/Video_overlay_rest_resize/" + video
-        input_audio_path = "../output/audio/" + video[:-4] + ".m4a"
+        input_video_path = "../data/Video/" + video
+        input_audio_path = "../data/Audio/" + video[:-4] + ".m4a"
         output_video_path = output_dir + video
         add_audio(input_video_path, input_audio_path, output_video_path)
 

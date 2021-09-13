@@ -93,15 +93,17 @@ def video_clip(input_video_path, output_video_dir, length=10):
 
 if __name__ == "__main__":
     length_list = [12]  # generate different lengths of short clips
-    video_list = os.listdir("../output/overlay_with_sound/")
+    video_list = os.listdir("../data/video/")
     for ii, video in enumerate(video_list):
         if video == ".DS_Store":
             continue
         # if ii < 10:
-        input_video_path = "../output/overlay_with_sound/" + video
+        input_video_path = "../data/video/" + video
         for length in length_list:
             output_video_dir = (
-                "../output/clips_12s/"
+                "../output/video_clips_"
+                + length
+                + "s/"
                 + video[:-4]
                 + "_"
                 + str(length).zfill(2)

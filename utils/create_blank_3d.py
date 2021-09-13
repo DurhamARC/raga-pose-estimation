@@ -394,7 +394,8 @@ def create_3d_video(
 
 
 if __name__ == "__main__":
-    # dataframe = read_csv(os.path.join(csv_dir, csv))
-    dataframe = read_csv("../data/CSV_Solo_3d/AG_1a_Jaun.csv")
+    csv = "../data/CSV_Solo_3d/AG_1a_Jaun.csv"
+    output = "test.mp4"
+    dataframe = read_csv(csv)
     df = dataframe
-    create_3d_video("test.mp4", df)
+    create_3d_video(output, df)

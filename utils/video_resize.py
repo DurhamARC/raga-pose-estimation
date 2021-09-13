@@ -104,14 +104,7 @@ def batch_video_resize(input_dir, output_dir):
         video_resize(input_video, output_video)
 
 
-if __name__ == "__main__":
-    # video_resize('output/CC_4a/video_blank.avi', 'output/CC_4a/resize_video_blank.mp4')
-    # video_resize('output/CC_1b1/video_overlay.avi', 'output/CC_1b1/resize_video_overlap.mp4')
-    # video_resize('output/CC_4a/video_blank.avi', 'output/CC_4a/resize_video_blank.mp4')
-    # video_clip('output/CC_1b/video_overlay.avi', 'output/CC_1b/overlay_clips_20s/', length=20)
-    # video_process('output/CC_1b/video_overlay.avi', 'output/CC_1b/overlay_clips_7s/', length=7)
-    # batch_video_resize('../Video_overlay', '../Video_overlay_rest_resize')
-    video_resize(
-        "../output/video_group/VK_Multani_CentralClose_3601_3719/video_overlay.mp4",
-        "../output/video_group/VK_Multani_CentralClose_3601_3719/resize.mp4",
-    )
+# example
+# video_clip('video_overlay.avi', 'overlay_clips_20s/', length=20)
+# video_process('video_overlay.avi', 'overlay_clips_7s/', length=7)
+# batch_video_resize('video_overlay', 'video_overlay_rest_resize')

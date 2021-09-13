@@ -119,6 +119,10 @@ def create_group_overlay(
 
 
 if __name__ == "__main__":
+    # input:
+    #      path of a csv file
+    #      path of a video file with the same name
+
     single = False
     if single:
         path_list = os.listdir("../data/CSV_Solo/")
