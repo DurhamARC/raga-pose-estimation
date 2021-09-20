@@ -1,8 +1,6 @@
 import os
-
 import cv2
 import pytest
-
 from entimement_openpose.video_utils import crop_video
 
 

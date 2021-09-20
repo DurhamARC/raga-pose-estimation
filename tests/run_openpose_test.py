@@ -39,15 +39,15 @@ def test_run_openpose(output_path):
     )
 
     # Check video files have been created and are about the size we expect
-    video_files = ["video_overlay.avi", "video_blank.avi"]
+    video_files = ["video_overlay.mp4", "video_blank.mp4"]
     for f in video_files:
         filename = os.path.join(output_path, f)
         assert os.path.isfile(filename)
         size = os.path.getsize(filename)
         if f == video_files[0]:
-            assert size > 1000000 and size < 10000000
-        else:
             assert size > 100000 and size < 1000000
+        else:
+            assert size > 10000 and size < 100000
 
     # Test CSVs have been created and the first lines are as we expect
     csv_files = ["person0.csv", "person1.csv"]

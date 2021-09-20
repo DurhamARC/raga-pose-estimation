@@ -4,12 +4,16 @@ import click
 import cv2
 
 from entimement_openpose.csv_writer import write_csv
-from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
+
+# load OpenPoseJsonParser from new file
+from entimement_openpose.openpose_json_parser_3d import OpenPoseJsonParser
 from entimement_openpose.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
 )
-from entimement_openpose.reshaper import reshape_dataframes
+
+# load reshape_dataframes from new file
+from entimement_openpose.reshaper_3d import reshape_dataframes
 from entimement_openpose.smoother import Smoother
 from entimement_openpose.video_utils import crop_video
 from entimement_openpose.visualizer import Visualizer
@@ -415,6 +419,10 @@ def run_openpose(
         smoother = Smoother(*smoothing_parameters)
         person_dfs = smoother.smooth(person_dfs)
 
+    print(f"Saving CSVs to {output_dir}...")
+    write_csv(person_dfs, output_dir, flatten=flatten)
+    print("Done.")
+
     if create_model_video or create_overlay_video:
         if not width or not height:
             cap = cv2.VideoCapture(input_video)
@@ -440,10 +448,6 @@ def run_openpose(
                 create_overlay=create_overlay_video,
                 video_to_overlay=input_video,
             )
-
-    print(f"Saving CSVs to {output_dir}...")
-    write_csv(person_dfs, output_dir, flatten=flatten)
-    print("Done.")
 
 
 if __name__ == "__main__":

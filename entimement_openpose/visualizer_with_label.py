@@ -4,6 +4,9 @@ import numpy as np
 from .openpose_parts import OpenPoseParts
 
 
+### could add signal light when creating the video ####
+
+
 class Visualizer:
     """Class providing visualization of OpenPose data from a DataFrame"""
 
@@ -101,7 +104,7 @@ class Visualizer:
                     elif part.startswith("L"):
                         color = Visualizer.L_COLOR
 
-                    img = cv2.circle(img, pos, 3, color, -1)
+                    img = cv2.circle(img, pos, 5, color, -1)
 
     def draw_lines(self, img, person_dfs, frame_index, paths):
         """Draws lines joining body parts on to the given image arrays.
@@ -134,7 +137,9 @@ class Visualizer:
 
                 for part in line:
                     if part.value in row.index.levels[0]:
-                        if not np.isnan(row[part.value]).any():
+                        # if not np.isnan(row[part.value]).any():
+                        if not (row[part.value] <= 0).any():
+
                             pt = np.int32(row[part.value].values)
                             pts[count] = pt[:2]
                             count += 1
@@ -144,7 +149,7 @@ class Visualizer:
                 pts = pts.reshape((-1, 1, 2))
 
                 cv2.polylines(
-                    img, [pts], False, Visualizer.LINE_COLOR, thickness=2,
+                    img, [pts], False, Visualizer.LINE_COLOR, thickness=4,
                 )
 
     def get_paths_from_dataframe(person_df):
@@ -160,6 +165,8 @@ class Visualizer:
 
         return paths
 
+    # Jin modification
+
     def create_video_from_dataframes(
         self,
         file_basename,
@@ -168,6 +175,8 @@ class Visualizer:
         height,
         create_overlay=False,
         video_to_overlay=None,
+        intervals=None,
+        accumulate=False,
     ):
         """Creates a video visualising the provided array of body keypoints.
         The lines to draw will be determined by the parts in the first
@@ -190,6 +199,16 @@ class Visualizer:
         video_to_overlay : str
             Path to video to overlay. Must be provided if create_overlay is
             True
+        interval: list example:[[start1, end1], [s2, e2], [s3, e3]]
+            The list of a time interval including start and end time.
+            Drawing a green circle in the top-left of the frame that included
+            in the interval, otherwise drawing a red circle. If default, do not
+            draw anything.
+            (default None)
+        accumulate: bool
+            If true, retain the previous skeletons
+            (default False)
+
 
         Returns
         -------
@@ -219,22 +238,49 @@ class Visualizer:
         out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
 
         # Draw the data from the DataFrame
+        if intervals is not None:
+            rest_list = []
+            for interval in intervals:
+                rest_list += list(range(interval[0], interval[1]))
+
+        if (not create_overlay) and accumulate:
+            img_acc = np.zeros((height, width, 3), np.uint8)
+
         for i in range(len(person_dfs[0].index)):
+            # if i > 10000:
+            #     continue
+            if i % 1000 == 0:
+                print(
+                    "{}/{} frames are saved".format(
+                        i, len(person_dfs[0].index)
+                    )
+                )
             if create_overlay:
                 ret, frame = cap.read()
                 if not ret:
-                    raise ValueError(
-                        "Not enough frames in overlay video to "
-                        "match data frame"
-                    )
+                    break
+
                 img = frame
             else:
-                img = np.ones((height, width, 3), np.uint8)
+                img = np.zeros((height, width, 3), np.uint8)
 
-            self.draw_lines(img, person_dfs, i, paths)
-            self.draw_points(img, person_dfs, i)
+            if (not create_overlay) and accumulate:
+                self.draw_points(img, person_dfs, i)
+                img_acc = cv2.add(img_acc, img)
+            else:
+                self.draw_points(img, person_dfs, i)
+                self.draw_lines(img, person_dfs, i, paths)
 
-            out.write(img)
+            if intervals is not None:
+                if i in rest_list:
+                    cv2.circle(img, (50, 50), 15, (0, 0, 255), -1)
+                else:
+                    cv2.circle(img, (50, 50), 15, (0, 255, 0), -1)
+
+            if (not create_overlay) and accumulate:
+                out.write(img_acc)
+            else:
+                out.write(img)
 
         if create_overlay:
             cap.release()

@@ -14,7 +14,7 @@ def test_create_video(three_frame_person_dfs):
     viz = Visualizer("output")
 
     # Ensure file doesn't exist
-    output_filename = "output/test_blank.avi"
+    output_filename = "output/test_blank.mp4"
     if os.path.exists(output_filename):
         os.remove(output_filename)
 
@@ -22,7 +22,7 @@ def test_create_video(three_frame_person_dfs):
     viz.create_video_from_dataframes("test", three_frame_person_dfs, 20, 10)
 
     # Check video file has been created and is about the size we expect
-    assert os.path.isfile("output/test_blank.avi")
+    assert os.path.isfile("output/test_blank.mp4")
     size = os.path.getsize(output_filename)
     assert size > 1000 and size < 10000
 
