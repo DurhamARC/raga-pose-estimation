@@ -108,8 +108,8 @@ example:
       |--AG_1a_Jaun.mp4
          
 
-3. bash_run_openpose_adaptive/3d.py
-Script of running 'run_openpose_adaptive/3d.py' in batch.
+3. bash_run_pose_estimation_adaptive/3d.py
+Script of running 'run_pose_estimation_adaptive/3d.py' in batch.
 
 III. MS-G3D process
 1. data_gen_solo.py

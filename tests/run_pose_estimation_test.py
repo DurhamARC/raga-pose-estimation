@@ -8,7 +8,7 @@ import pytest
 sys.path.append("../")
 
 from raga_pose_estimation.openpose_parts import OpenPoseParts
-import run_openpose
+import run_pose_estimation
 
 
 @pytest.fixture
@@ -20,10 +20,10 @@ def output_path():
     return output_path
 
 
-def test_run_openpose(output_path):
+def test_run_pose_estimation(output_path):
     path_to_json = os.path.realpath("tests/test_json/")
 
-    run_openpose.run_openpose(
+    run_pose_estimation.run_pose_estimation(
         output_path,
         input_video="example_files/example_3people/short_video.mp4",
         input_json=path_to_json,
@@ -84,10 +84,10 @@ def test_run_openpose(output_path):
         assert df.shape == (26, 9)
 
 
-def test_run_openpose_flatten(output_path):
+def test_run_pose_estimation_flatten(output_path):
     path_to_json = os.path.realpath("tests/test_json/")
 
-    run_openpose.run_openpose(
+    run_pose_estimation.run_pose_estimation(
         output_path,
         input_json=path_to_json,
         number_of_people=2,
@@ -125,14 +125,14 @@ def test_run_openpose_flatten(output_path):
                 )
 
 
-def test_run_openpose_invalid_output_path(capsys):
+def test_run_pose_estimation_invalid_output_path(capsys):
     # Create output directory
     output_path = os.path.realpath("output/tests/")
     os.makedirs(output_path, exist_ok=True)
     open(os.path.join(output_path, "invalid"), "x")
 
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(output_path)
+        run_pose_estimation.run_pose_estimation(output_path)
 
     captured = capsys.readouterr()
     assert (
@@ -141,10 +141,10 @@ def test_run_openpose_invalid_output_path(capsys):
     )
 
 
-def test_run_openpose_invalid_parameters(capsys, output_path):
+def test_run_pose_estimation_invalid_parameters(capsys, output_path):
     # Run without sufficient parameters
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(output_path)
+        run_pose_estimation.run_pose_estimation(output_path)
 
     captured = capsys.readouterr()
     assert (
@@ -154,7 +154,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Input video without json or openpose
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             input_video="example_files/example_3people/short_video.mp4",
         )
@@ -167,7 +167,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Overlay without input video
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             input_json="example_files/example_3people",
             create_overlay_video=True,
@@ -181,7 +181,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Crop without input video
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             input_json="example_files/example_3people/output_json",
             create_model_video=True,
@@ -196,7 +196,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Model video without dimensions or input video
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             input_json="example_files/example_3people/output_json",
             create_model_video=True,
@@ -210,7 +210,9 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Invalid JSON path
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(output_path, input_json="notavalidpath")
+        run_pose_estimation.run_pose_estimation(
+            output_path, input_json="notavalidpath"
+        )
 
     captured = capsys.readouterr()
     invalid_path = os.path.realpath("notavalidpath")
@@ -223,7 +225,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     # Invalid crop parameters
     for crop_rect in [("width", 20, 4, 30), (1, 2, 3)]:
         with pytest.raises(SystemExit):
-            run_openpose.run_openpose(
+            run_pose_estimation.run_pose_estimation(
                 output_path,
                 openpose_dir=".",
                 input_video=input_video_path,
@@ -237,7 +239,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
         )
 
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             openpose_dir=".",
             input_video=input_video_path,
@@ -256,7 +258,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Invalid openpose path
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             openpose_dir=invalid_path,
             input_video="example_files/example_3people/short_video.mp4",
@@ -271,7 +273,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
     # Invalid openpose path: path exists but does not contain openpose
     example_path = os.path.realpath("example_files")
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(
+        run_pose_estimation.run_pose_estimation(
             output_path,
             openpose_dir=example_path,
             input_video="example_files/example_3people/short_video.mp4",
@@ -285,7 +287,9 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 
     # Empty JSON path
     with pytest.raises(SystemExit):
-        run_openpose.run_openpose(output_path, input_json=output_path)
+        run_pose_estimation.run_pose_estimation(
+            output_path, input_json=output_path
+        )
 
     captured = capsys.readouterr()
     assert (
@@ -297,7 +301,7 @@ def test_run_openpose_invalid_parameters(capsys, output_path):
 def test_openpose_cli_part_group(output_path):
     # Valid cli command
     result = os.system(
-        f"python run_openpose.py --input-json example_files/example_3people/output_json "
+        f"python run_pose_estimation.py --input-json example_files/example_3people/output_json "
         f"--output-dir {output_path} --upper-body-parts -n 2"
     )
     assert result == 0
@@ -322,7 +326,7 @@ def test_openpose_cli_part_group(output_path):
 def test_openpose_cli_specified_parts(output_path):
     # Valid cli command with specific parts
     result = os.system(
-        f"python run_openpose.py --input-json example_files/example_3people/output_json "
+        f"python run_pose_estimation.py --input-json example_files/example_3people/output_json "
         f"--output-dir {output_path} --body-parts=LEye,REye,Nose -n 2"
     )
     assert result == 0
@@ -345,14 +349,16 @@ def test_openpose_cli_specified_parts(output_path):
 
 def test_openpose_cli_invalid_args(output_path):
     # Invalid cli command
-    result = os.system(f"python run_openpose.py --output-dir {output_path}")
+    result = os.system(
+        f"python run_pose_estimation.py --output-dir {output_path}"
+    )
     assert result > 0
 
 
 def test_openpose_cli_invalid_parts(output_path):
     # Invalid cli command
     result = os.system(
-        f"python run_openpose.py --input-json example_files/example_3people/output_json "
+        f"python run_pose_estimation.py --input-json example_files/example_3people/output_json "
         f"--output-dir {output_path} --body-parts=Forehead,Chin"
     )
     assert result > 0

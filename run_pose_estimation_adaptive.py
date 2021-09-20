@@ -5,18 +5,20 @@ import cv2
 
 from raga_pose_estimation.csv_writer import write_csv
 
-# load OpenPoseJsonParser from new file
-from raga_pose_estimation.openpose_json_parser_3d import OpenPoseJsonParser
+# load OpenPoseJsonParser from a new file
+from raga_pose_estimation.openpose_json_parser_adaptive import (
+    OpenPoseJsonParser,
+)
 from raga_pose_estimation.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
 )
-
-# load reshape_dataframes from new file
-from raga_pose_estimation.reshaper_3d import reshape_dataframes
+from raga_pose_estimation.reshaper import reshape_dataframes
 from raga_pose_estimation.smoother import Smoother
 from raga_pose_estimation.video_utils import crop_video
-from raga_pose_estimation.visualizer import Visualizer
+
+# load visualizer from a new file
+from raga_pose_estimation.visualizer_with_label import Visualizer
 
 
 @click.command()
@@ -180,7 +182,7 @@ def openpose_cli(
     if smoothing_parameters == (None, None):
         smoothing_parameters = None
 
-    run_openpose(
+    run_pose_estimation(
         output_dir,
         openpose_dir,
         openpose_args,
@@ -199,7 +201,7 @@ def openpose_cli(
     )
 
 
-def run_openpose(
+def run_pose_estimation(
     output_dir,
     openpose_dir=None,
     openpose_args=None,
@@ -397,7 +399,9 @@ def run_openpose(
     json_files.sort()
     previous_body_keypoints_df = None
 
-    for file in json_files:
+    for num, file in enumerate(json_files):
+        # if num < 4300:
+        #     continue
         parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
         body_keypoints_df = parser.get_multiple_keypoints(
             list(range(number_of_people)),
@@ -408,6 +412,7 @@ def run_openpose(
         body_keypoints_df = parser.sort_persons_by_x_position(
             body_keypoints_df
         )
+
         body_keypoints_df.reset_index()
         body_keypoints_dfs.append(body_keypoints_df)
         previous_body_keypoints_df = body_keypoints_df
@@ -449,6 +454,8 @@ def run_openpose(
                 video_to_overlay=input_video,
             )
 
+
+# debugfile('/Users/jinli/code/openpose-music/run_pose_estimation_Jin.py', args='-j data/JSON/NIR_SCh_Malhar_SideL_StereoMix/json -v data/video_group/NIR_SCh_Malhar_SideL_StereoMix.mp4 -o output/video_group/NIR_SCh_Malhar_SideL_StereoMix -u -V -n 10 -c 0.7 -s 13 2', wdir='/Users/jinli/code/openpose-music')
 
 if __name__ == "__main__":
     openpose_cli()

@@ -26,7 +26,7 @@ for name in names:
         print("output csv into {}".format(output_json))
         # run the bash command
         command = (
-            "python3 ../run_openpose_3d.py -j "
+            "python3 ../run_pose_estimation_3d.py -j "
             + input_json
             + " -o "
             + output_json

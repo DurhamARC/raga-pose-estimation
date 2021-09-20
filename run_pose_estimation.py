@@ -176,7 +176,7 @@ def openpose_cli(
     if smoothing_parameters == (None, None):
         smoothing_parameters = None
 
-    run_openpose(
+    run_pose_estimation(
         output_dir,
         openpose_dir,
         openpose_args,
@@ -195,7 +195,7 @@ def openpose_cli(
     )
 
 
-def run_openpose(
+def run_pose_estimation(
     output_dir,
     openpose_dir=None,
     openpose_args=None,

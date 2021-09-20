@@ -30,8 +30,8 @@ Alternatively use `pip` to install the packages listed in [`environment.yml`](en
 ## Running the command line script
 
 ```
-$ python run_openpose.py --help
-Usage: run_openpose.py [OPTIONS]
+$ python run_pose_estimation.py --help
+Usage: run_pose_estimation.py [OPTIONS]
 
   Runs openpose on the video, does post-processing, and outputs CSV files.
   See cli docs for parameter details.
@@ -109,13 +109,13 @@ Run OpenPose on a video to produce output CSVs (1 per person) in the `output` di
 and an overlay video, cropping the video to width 720, height 800 from (600, 50):
 
 ```bash
-python run_openpose.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video --crop-rectangle 720 800 600 50
+python run_pose_estimation.py --input-video=example_files/example_1person/short_video.mp4 --openpose-dir=../openpose --output-dir=output --create-overlay-video --crop-rectangle 720 800 600 50
 ```
 
 Parse existing JSON files created by OpenPose to produce 1 CSV per person in the `output` folder, showing only upper body parts, outputting up to 3 people, and using the confidence_threshold and smoothing to improve the output (using short form of arguments):
 
 ```bash
-python run_openpose.py -j example_files/example_3people/output_json -o output -u -n 3 -s 21 2 -c 0.7
+python run_pose_estimation.py -j example_files/example_3people/output_json -o output -u -n 3 -s 21 2 -c 0.7
 ```
 
 ### Quick run
