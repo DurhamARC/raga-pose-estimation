@@ -8,7 +8,7 @@ This library was created for the [EnTimeMent](https://entimement.dibris.unige.it
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Running the CoLab script](#running-the-colab-script)
-- [Installation of `entimement_openpose` python library](#installation-of-entimementopenpose-python-library)
+- [Installation of `raga_pose_estimation` python library](#installation-of-entimementopenpose-python-library)
 - [Running the command line script](#running-the-command-line-script)
 - [Post-processing options](#post-processing-options)
 - [CSV format](#csv-format)
@@ -18,8 +18,8 @@ This library was created for the [EnTimeMent](https://entimement.dibris.unige.it
 ## Running the CoLab script
 Open [OpenPose_Colab.ipynb](OpenPose_Colab.ipynb) and click 'Run in CoLab'.
 
-## Installation of `entimement_openpose` python library
-Install dependencies of entimement_openpose using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
+## Installation of `raga_pose_estimation` python library
+Install dependencies of raga_pose_estimation using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
 
 ```
 conda env create -f environment.yml
@@ -191,5 +191,5 @@ which in table form looks like:
 | 1 | 974\.83  | 286\.009 | 0\.910094 | 909\.925 | 271\.277 | 0\.925763 |
 
 ## Other details
-The files with suffix like '_3d' and '_adaptive' correspond to the process of specific pose data. 
+The files with suffix like '_3d' and '_adaptive' correspond to the process of specific pose data.
 The folder 'utils' includes some useful tools to process the data. Please find more details from 'utils/README.md'.

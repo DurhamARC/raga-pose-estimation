@@ -3,22 +3,22 @@ import os
 import click
 import cv2
 
-from entimement_openpose.csv_writer import write_csv
+from raga_pose_estimation.csv_writer import write_csv
 
 # load OpenPoseJsonParser from a new file
-from entimement_openpose.openpose_json_parser_adaptive import (
+from raga_pose_estimation.openpose_json_parser_adaptive import (
     OpenPoseJsonParser,
 )
-from entimement_openpose.openpose_parts import (
+from raga_pose_estimation.openpose_parts import (
     OpenPosePartGroups,
     OpenPoseParts,
 )
-from entimement_openpose.reshaper import reshape_dataframes
-from entimement_openpose.smoother import Smoother
-from entimement_openpose.video_utils import crop_video
+from raga_pose_estimation.reshaper import reshape_dataframes
+from raga_pose_estimation.smoother import Smoother
+from raga_pose_estimation.video_utils import crop_video
 
 # load visualizer from a new file
-from entimement_openpose.visualizer_with_label import Visualizer
+from raga_pose_estimation.visualizer_with_label import Visualizer
 
 
 @click.command()

@@ -7,7 +7,7 @@ import pytest
 
 sys.path.append("../")
 
-from entimement_openpose.openpose_parts import OpenPoseParts
+from raga_pose_estimation.openpose_parts import OpenPoseParts
 import run_openpose
 
 

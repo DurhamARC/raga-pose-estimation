@@ -1,7 +1,7 @@
 import pandas as pd
 
-from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
-from entimement_openpose.openpose_parts import (
+from raga_pose_estimation.openpose_json_parser import OpenPoseJsonParser
+from raga_pose_estimation.openpose_parts import (
     OpenPoseParts,
     OpenPosePartGroups,
 )

@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from entimement_openpose.openpose_parts import OpenPoseParts
-from entimement_openpose.visualizer import Visualizer
+from raga_pose_estimation.openpose_parts import OpenPoseParts
+from raga_pose_estimation.visualizer import Visualizer
 from . import single_frame_person_df, three_frame_person_dfs
 
 
