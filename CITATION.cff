@@ -11,6 +11,11 @@ authors:
     family-names: Weinzierl
     given-names: Marion
     orcid: "https://orcid.org/0000-0002-2302-5476"
+  - 
+    affiliation: "Durham University, Shaanxi Normal Univeristy"
+    family-names: Li
+    given-names: Jin
+    orcid: "https://orcid.org/0000-0002-0260-3169"
 title: "Pose estimation for Raga"
 version: 1.0.0
 date-released: 2021-08-11
