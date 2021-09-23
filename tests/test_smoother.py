@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from entimement_openpose.reshaper import reshape_dataframes
-from entimement_openpose.smoother import Smoother
-from entimement_openpose.openpose_json_parser import OpenPoseJsonParser
-from entimement_openpose.openpose_parts import OpenPoseParts
+from raga_pose_estimation.reshaper import reshape_dataframes
+from raga_pose_estimation.smoother import Smoother
+from raga_pose_estimation.openpose_json_parser import OpenPoseJsonParser
+from raga_pose_estimation.openpose_parts import OpenPoseParts
 
 from . import dummy_dataframes
 

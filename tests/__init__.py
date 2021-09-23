@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 import pytest
-from entimement_openpose.openpose_parts import OpenPoseParts
-from entimement_openpose.reshaper import reshape_dataframes
+from raga_pose_estimation.openpose_parts import OpenPoseParts
+from raga_pose_estimation.reshaper import reshape_dataframes
 
 
 def _get_dummy_dataframes():

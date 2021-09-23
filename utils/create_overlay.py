@@ -17,7 +17,7 @@ add_path(os.path.normpath(root_path))
 
 import pandas as pd
 import cv2
-from entimement_openpose.visualizer_adaptive import Visualizer
+from raga_pose_estimation.visualizer_adaptive import Visualizer
 
 
 ##################################################################
