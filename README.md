@@ -1,7 +1,7 @@
-# OpenPose for EnTimeMent
+# Raga Pose Estimation
 
 Library and CoLab script to facilitate running [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) and
-to do some post-processing.
+post-processing the results.
 
 This library was created for the [EnTimeMent](https://entimement.dibris.unige.it) project.
 
@@ -16,7 +16,7 @@ This library was created for the [EnTimeMent](https://entimement.dibris.unige.it
 <!-- /TOC -->
 
 ## Running the CoLab script
-Open [OpenPose_Colab.ipynb](OpenPose_Colab.ipynb) and click 'Run in CoLab'.
+Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in CoLab'.
 
 ## Installation of `raga_pose_estimation` python library
 Install dependencies of raga_pose_estimation using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
