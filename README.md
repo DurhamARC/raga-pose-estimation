@@ -7,19 +7,31 @@ This library was created for the [EnTimeMent](https://entimement.dibris.unige.it
 
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
+- [License](#license)
 - [Running the CoLab script](#running-the-colab-script)
-- [Installation of `raga_pose_estimation` python library](#installation-of-entimementopenpose-python-library)
+- [Installation of raga_pose_estimation python library](#installation-of-ragaposeestimation-python-library)
 - [Running the command line script](#running-the-command-line-script)
 - [Post-processing options](#post-processing-options)
 - [CSV format](#csv-format)
+- [Other details](#other-details)
 
 <!-- /TOC -->
+
+## License
+
+The code in this repository is licensed under the [MIT License](LICENSE).
+
+Note that in order to run OpenPose you must read and accept the
+[OpenPose License](https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/LICENSE).
+OpenPose is free for non-commercial use only; see the
+[OpenPose README](https://github.com/CMU-Perceptual-Computing-Lab/openpose#license)
+for further details.
 
 ## Running the CoLab script
 Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in CoLab'.
 
-## Installation of `raga_pose_estimation` python library
-Install dependencies of raga_pose_estimation using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
+## Installation of raga_pose_estimation python library
+Install dependencies of `raga_pose_estimation` using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
 
 ```
 conda env create -f environment.yml
