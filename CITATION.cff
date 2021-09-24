@@ -1,5 +1,4 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
 authors: 
   -
     affiliation: "Durham University"
@@ -17,6 +16,6 @@ authors:
     given-names: Jin
     orcid: "https://orcid.org/0000-0002-0260-3169"
 title: "Pose estimation for Raga"
-version: 1.0.0
+version: v1.0.1
 date-released: 2021-08-11
 url: "https://github.com/DurhamARC/raga-pose-estimation"
