@@ -235,7 +235,7 @@ class Visualizer:
         filename = os.path.join(
             self.output_directory, "%s_%s.mp4" % (file_basename, name)
         )
-        out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
+        out = cv2.VideoWriter(filename, fourcc, 60, (width, height))
 
         # Draw the data from the DataFrame
         if intervals is not None:
