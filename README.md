@@ -111,6 +111,7 @@ Options:
   -l, --lower-body-parts          Output lower body parts only
   -f, --flatten TEXT              Export CSV in flattened format, i.e. with a
                                   single header row (see README)
+  -tn, --trial_number INTEGER     Trial number of run.
 
   --help                          Show this message and exit.
 ```

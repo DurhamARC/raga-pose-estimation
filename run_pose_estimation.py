@@ -148,6 +148,14 @@ from raga_pose_estimation.visualizer import Visualizer
     help="Trial number for this run",
 )
 
+@click.option(
+    "-p",
+    "--performer_names",
+    default=None,
+    help="Performer's names from left to right",
+    multiple=True
+)
+
 def openpose_cli(
     output_dir,
     openpose_dir,
@@ -166,6 +174,7 @@ def openpose_cli(
     bodypartsgroup,
     flatten,
     trial_number,
+    performer_names
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
     files. See cli docs for parameter details."""
@@ -202,7 +211,8 @@ def openpose_cli(
         smoothing_parameters,
         body_parts_list,
         flatten,
-        trial_number
+        trial_number,
+        performer_names
     )
 
 
@@ -222,7 +232,8 @@ def run_pose_estimation(
     smoothing_parameters=None,
     body_parts=None,
     flatten=False,
-    trial_number=None
+    trial_number=None,
+    performer_names=None
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
     Non-click version to work from jupyter notebooks.
@@ -454,7 +465,7 @@ def run_pose_estimation(
             )
 
     print(f"Saving CSVs to {output_dir}...")
-    write_csv(person_dfs, output_dir, trial_number, flatten=flatten)
+    write_csv(person_dfs, output_dir, trial_number, performer_names, flatten=flatten)
     print("Done.")
 
 
