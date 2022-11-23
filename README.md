@@ -204,8 +204,5 @@ which in table form looks like:
 
 ## Other details
 The files with suffix like '_3d' and '_adaptive' correspond to the process of specific pose data.
-The folder 'utils' includes some useful tools to process the data. Please find more details from 'utils/README.md'.
-
-
-Test to see if right branch
+The folder 'utils' includes some useful tools to process the data. Please find more details from 'utils/README.md'.§
 

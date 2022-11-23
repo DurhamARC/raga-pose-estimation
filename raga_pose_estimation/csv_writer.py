@@ -1,7 +1,7 @@
 import os
 
 
-def write_csv(person_dfs, output_dir, flatten=False):
+def write_csv(person_dfs, output_dir, trial_no=None, flatten=False):
     """Creates CSVs in the given output directory. Each CSV contains
     details for 1 person, with columns for x, y, c for each body parts and
     rows representing each frame.
@@ -24,6 +24,11 @@ def write_csv(person_dfs, output_dir, flatten=False):
             ]
 
         # Output to CSV
-        person_df.to_csv(
-            os.path.join(output_dir, f"person{i}.csv"), float_format="%.3f"
-        )
+        if trial_no:
+            person_df.to_csv(
+                os.path.join(output_dir, f"person{i}_trial_{trial_no}.csv"), float_format="%.3f"
+            )
+        else:
+            person_df.to_csv(
+                os.path.join(output_dir, f"person{i}.csv"), float_format="%.3f"
+            )
