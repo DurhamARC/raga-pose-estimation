@@ -165,7 +165,7 @@ def openpose_cli(
     body_parts,
     bodypartsgroup,
     flatten,
-    trial_no
+    trial_number,
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
     files. See cli docs for parameter details."""
@@ -202,7 +202,7 @@ def openpose_cli(
         smoothing_parameters,
         body_parts_list,
         flatten,
-        trial_no
+        trial_number
     )
 
 
@@ -222,7 +222,7 @@ def run_pose_estimation(
     smoothing_parameters=None,
     body_parts=None,
     flatten=False,
-    trial_no
+    trial_number=None
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
     Non-click version to work from jupyter notebooks.
@@ -454,7 +454,7 @@ def run_pose_estimation(
             )
 
     print(f"Saving CSVs to {output_dir}...")
-    write_csv(person_dfs, output_dir, trial_no, flatten=flatten)
+    write_csv(person_dfs, output_dir, trial_number, flatten=flatten)
     print("Done.")
 
 
