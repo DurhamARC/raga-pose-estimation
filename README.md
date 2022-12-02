@@ -112,6 +112,7 @@ Options:
   -f, --flatten TEXT              Export CSV in flattened format, i.e. with a
                                   single header row (see README)
   -tn, --trial_number INTEGER     Trial number of run.
+  -p, --performer_names"          Names of performers from left to right.
 
   --help                          Show this message and exit.
 ```
