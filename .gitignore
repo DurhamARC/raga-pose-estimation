@@ -138,3 +138,10 @@ dmypy.json
 # env files
 ragaenv/
 cmake*
+
+# json files
+*.json
+
+# json folders
+content/
+error_analysis/

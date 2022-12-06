@@ -46,7 +46,7 @@ def performer_to_dict(performers_names, person_dfs):
 
 def trial_number(trial_no):
     if trial_no:
-        trial_no = f"_trial_{trial_no}"
+        trial_no = trial_no
     else:
         trial_no = ""
     return trial_no

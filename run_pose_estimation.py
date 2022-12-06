@@ -142,10 +142,10 @@ from raga_pose_estimation.visualizer import Visualizer
 
 @click.option(
     "-tn",
-    "--trial_number",
-    type=int,
+    "--trial_name",
+    type=str,
     default=None,
-    help="Trial number for this run",
+    help="Trial name for this run",
 )
 
 @click.option(
@@ -173,7 +173,7 @@ def openpose_cli(
     body_parts,
     bodypartsgroup,
     flatten,
-    trial_number,
+    trial_name,
     performer_names
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
@@ -211,7 +211,7 @@ def openpose_cli(
         smoothing_parameters,
         body_parts_list,
         flatten,
-        trial_number,
+        trial_name,
         performer_names
     )
 
@@ -232,7 +232,7 @@ def run_pose_estimation(
     smoothing_parameters=None,
     body_parts=None,
     flatten=False,
-    trial_number=None,
+    trial_name=None,
     performer_names=None
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
@@ -290,6 +290,7 @@ def run_pose_estimation(
         single header row (see README).
     """
     # Check output directory
+    output_dir = output_dir + '_trial_' + str(trial_name)
     output_dir = os.path.abspath(output_dir)
     if os.path.isdir(output_dir) and os.listdir(output_dir):
         print(
@@ -429,7 +430,12 @@ def run_pose_estimation(
         )
         body_keypoints_df.reset_index()
         body_keypoints_dfs.append(body_keypoints_df)
-        previous_body_keypoints_df = body_keypoints_df
+
+        
+        people_found = int(body_keypoints_df.shape[1]/3)
+        if number_of_people == people_found:
+
+            previous_body_keypoints_df = body_keypoints_df
 
     person_dfs = reshape_dataframes(body_keypoints_dfs)
 
@@ -465,7 +471,7 @@ def run_pose_estimation(
             )
 
     print(f"Saving CSVs to {output_dir}...")
-    write_csv(person_dfs, output_dir, trial_number, performer_names, flatten=flatten)
+    write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten)
     print("Done.")
 
 
