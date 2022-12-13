@@ -13,6 +13,7 @@ from raga_pose_estimation.reshaper import reshape_dataframes
 from raga_pose_estimation.smoother import Smoother
 from raga_pose_estimation.video_utils import crop_video
 from raga_pose_estimation.visualizer import Visualizer
+from raga_pose_estimation.audio_combiner import Audio
 
 
 @click.command()
@@ -452,12 +453,14 @@ def run_pose_estimation(
             cap.release()
 
         visualizer = Visualizer(output_directory=output_dir)
+        audio = Audio(input_video_path = input_video, output_directory=output_dir)
 
         if create_model_video:
             print("Creating model video...")
             visualizer.create_video_from_dataframes(
                 "video", person_dfs, width, height, input_video_path=input_video
             )
+            
 
         if create_overlay_video:
             print("Creating overlay video...")
@@ -466,10 +469,14 @@ def run_pose_estimation(
                 person_dfs,
                 width,
                 height,
+                input_video_path=input_video,
                 create_overlay=create_overlay_video,
                 video_to_overlay=input_video,
-                input_video_path=input_video
             )
+
+            print("Adding audio...")
+            audio.extract_audio(input_video_path=input_video, output_directory = output_dir)
+            audio.attach_audio(output_dir)
 
     print(f"Saving CSVs to {output_dir}...")
     write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = False)
