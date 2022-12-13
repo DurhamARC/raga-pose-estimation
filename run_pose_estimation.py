@@ -475,8 +475,7 @@ def run_pose_estimation(
             )
 
             print("Adding audio...")
-            audio.extract_audio(input_video_path=input_video, output_directory = output_dir)
-            audio.attach_audio(output_dir)
+            audio.audio_combiner(input_video_path=input_video, output_directory = output_dir)
 
     print(f"Saving CSVs to {output_dir}...")
     write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = False)

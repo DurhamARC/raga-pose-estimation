@@ -15,4 +15,5 @@ dependencies:
   - black
   - pre-commit
   - ffmpeg-python
+  - pymediainfo=6.0.1
 prefix: /opt/homebrew/Caskroom/miniforge/base/envs/raga_project
