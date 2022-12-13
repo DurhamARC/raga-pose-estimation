@@ -456,7 +456,7 @@ def run_pose_estimation(
         if create_model_video:
             print("Creating model video...")
             visualizer.create_video_from_dataframes(
-                "video", person_dfs, width, height
+                "video", person_dfs, width, height, input_video_path=input_video
             )
 
         if create_overlay_video:
@@ -468,6 +468,7 @@ def run_pose_estimation(
                 height,
                 create_overlay=create_overlay_video,
                 video_to_overlay=input_video,
+                input_video_path=input_video
             )
 
     print(f"Saving CSVs to {output_dir}...")

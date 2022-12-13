@@ -36,3 +36,4 @@ def crop_video(input_path, output_dir, w, h, x, y):
 
     ffmpeg.input(input_path).crop(x, y, w, h).output(output_filepath).run()
     return output_filepath
+
