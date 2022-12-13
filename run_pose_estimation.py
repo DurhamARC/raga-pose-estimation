@@ -442,7 +442,7 @@ def run_pose_estimation(
     if smoothing_parameters:
         print("Smoothing output...")
         smoother = Smoother(*smoothing_parameters)
-        person_dfs = smoother.smooth(person_dfs)
+        smoothed_person_dfs = smoother.smooth(person_dfs)
 
     if create_model_video or create_overlay_video:
         if not width or not height:
@@ -471,7 +471,9 @@ def run_pose_estimation(
             )
 
     print(f"Saving CSVs to {output_dir}...")
-    write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten)
+    write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = False)
+    if smoothed_person_dfs:
+        write_csv(smoothed_person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = True)
     print("Done.")
 
 

@@ -1,7 +1,7 @@
 import os
 
 
-def write_csv(person_dfs, output_dir, trial_no=None, performers_names= None, flatten=False):
+def write_csv(person_dfs, output_dir, trial_no=None, performers_names= None, flatten=False, smoothed = False):
     """Creates CSVs in the given output directory. Each CSV contains
     details for 1 person, with columns for x, y, c for each body parts and
     rows representing each frame.
@@ -28,8 +28,13 @@ def write_csv(person_dfs, output_dir, trial_no=None, performers_names= None, fla
             ]
 
         # Output to CSV
+        if smoothed:
+            smooth = "smoothed_"
+        else:
+            smooth = ""
+        output_name = f"{smooth}{trial_no}_{performer_dict[i]}.csv"
         person_df.to_csv(
-            os.path.join(output_dir, f"{performer_dict[i]}{trial_no}.csv"), float_format="%.3f"
+            os.path.join(output_dir, output_name), float_format="%.3f"
         )
 
 
