@@ -55,6 +55,9 @@ Options:
   -j, --input-json TEXT           Path to a directory of previously generated
                                   openpose json files
 
+  -bf, --batch-folder TEXT        Path to directory of folders with subfolders
+                                  with JSON files and optional videos
+
   -o, --output-dir TEXT           Path to the directory in which to output CSV
                                   files (and videos if required).
 
