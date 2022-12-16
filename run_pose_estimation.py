@@ -1,5 +1,5 @@
 import os
-
+import glob
 import click
 import cv2
 
@@ -196,8 +196,7 @@ def openpose_cli(
     if smoothing_parameters == (None, None):
         smoothing_parameters = None
 
-    run_pose_estimation(
-        output_dir,
+    multiple_videos(output_dir,
         openpose_dir,
         openpose_args,
         input_video,
@@ -213,8 +212,7 @@ def openpose_cli(
         body_parts_list,
         flatten,
         trial_name,
-        performer_names
-    )
+        performer_names)
 
 
 def run_pose_estimation(
@@ -291,7 +289,7 @@ def run_pose_estimation(
         single header row (see README).
     """
     # Check output directory
-    output_dir = output_dir + '_trial_' + str(trial_name)
+    output_dir = output_dir + "_" + str(trial_name)
     output_dir = os.path.abspath(output_dir)
     if os.path.isdir(output_dir) and os.listdir(output_dir):
         print(
@@ -483,6 +481,93 @@ def run_pose_estimation(
         write_csv(smoothed_person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = True)
     print("Done.")
 
+def multiple_videos(output_dir,
+                openpose_dir,
+                openpose_args,
+                input_video,
+                input_json,
+                crop_rectangle,
+                number_of_people,
+                create_model_video,
+                create_overlay_video,
+                width,
+                height,
+                confidence_threshold,
+                smoothing_parameters,
+                body_parts_list,
+                flatten,
+                trial_name,
+                performer_names):
+    contents = os.listdir(input_json)
+    # If single run
+    if not any(".json" in file for file in contents):
+        contents = [x for x in contents if not x.startswith('.')]
+        for input_folder in contents:
+            multi_input_json = input_json + input_folder + "/output_json/"
+            multi_trial_name = input_folder
+            multi_output_dir = multi_name(output_dir,
+                confidence_threshold,
+                smoothing_parameters)
+            multi_input_video, create_model_video, create_overlay_video = find_input_video(input_json, input_folder)
 
+            run_pose_estimation(
+                multi_output_dir,
+                openpose_dir,
+                openpose_args,
+                multi_input_video,
+                multi_input_json,
+                crop_rectangle,
+                number_of_people,
+                create_model_video,
+                create_overlay_video,
+                width,
+                height,
+                confidence_threshold,
+                smoothing_parameters,
+                body_parts_list,
+                flatten,
+                multi_trial_name,
+                performer_names
+            )
+    else:
+        run_pose_estimation(
+                output_dir,
+                openpose_dir,
+                openpose_args,
+                input_video,
+                multi_input_json,
+                crop_rectangle,
+                number_of_people,
+                create_model_video,
+                create_overlay_video,
+                width,
+                height,
+                confidence_threshold,
+                smoothing_parameters,
+                body_parts_list,
+                flatten,
+                trial_name,
+                performer_names
+            )
+
+def multi_name(output_dir,
+                confidence_threshold,
+                smoothing_parameters):
+    con = str(confidence_threshold)[0:3]
+    smo = str(smoothing_parameters)[1:-1].replace(', ', '_')
+    return f'{output_dir}_c{con}_s{smo}'
+
+def find_input_video(input_json, input_folder):
+    video_path = input_json + input_folder + '/*.mp4'
+    mp4_files = glob.glob(video_path)
+    print(mp4_files)
+    if len(mp4_files) == 0:
+        return None, None, None 
+    if len(mp4_files) == 1:
+        print("Input video found.")
+        return mp4_files[0], True, True
+    else:
+        print("Too many video files in folder.")
+        return None, None, None 
 if __name__ == "__main__":
     openpose_cli()
