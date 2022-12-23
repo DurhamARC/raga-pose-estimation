@@ -24,7 +24,7 @@ A raga performance is a traditional form of Indian classical music that involves
 ![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
 
 ## Running the Google Colab script
-Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in CoLab'.
+Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in Colab'.
 
 ## Installation of raga_pose_estimation Python library
 Install dependencies of `raga_pose_estimation` using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
