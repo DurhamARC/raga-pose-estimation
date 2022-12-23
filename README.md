@@ -6,7 +6,7 @@ A raga performance is a traditional form of Indian classical music that involves
 
 ![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
 
-This library was created for the [EnTimeMent](https://entimement.dibris.unige.it) project.
+# Contents
 
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
