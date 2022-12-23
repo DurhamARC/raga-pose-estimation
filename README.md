@@ -1,5 +1,9 @@
 # Raga Pose Estimation
 
+A raga performance is a traditional form of Indian classical music that involves the improvisation of melodies and rhythms within a specific framework. Each performer's movements are unique, and the subtle differences in their techniques and styles can have a significant impact on the overall performance.
+
+Using computer vision techniques, it is now possible to create an objective method for analyzing these differences between performers. This code generates tabular data and a skeleton overlay onto a musical performance, to gain insights into the specific techniques and movements used by each performer. 
+
 Library and CoLab script to facilitate running [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) and
 post-processing the results.
 
