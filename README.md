@@ -5,13 +5,13 @@
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Introduction](#introduction)
-- [License](#license)
 - [Running the CoLab script](#running-the-colab-script)
 - [Installation of raga_pose_estimation python library](#installation-of-ragaposeestimation-python-library)
 - [Running the command line script](#running-the-command-line-script)
 - [Post-processing options](#post-processing-options)
 - [CSV format](#csv-format)
 - [Other details](#other-details)
+- [License](#license)
 
 <!-- /TOC -->
 
@@ -22,16 +22,6 @@
 A raga performance is a traditional form of Indian classical music that involves the improvisation of melodies and rhythms within a specific framework. By using computer vision techniques, it is possible to objectively analyze the differences in techniques and styles between performers, and to gain insights into the specific movements and techniques used by each performer. This project with The University of Durham's music department and [EnTimeMent](https://entimement.dibris.unige.it), which uses a novel neuro-cognitive approach to study human movement and behavior, has developed a code that generates coordinate data and a skeleton overlay of a musical performance. This code, which is available as a library and Colab script, utilizes the [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) tool to facilitate the analysis of the performance. By using this code, researchers and music enthusiasts can better understand and appreciate the art of raga performance.
 
 ![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
-
-## License
-
-The code in this repository is licensed under the [MIT License](LICENSE).
-
-Note that in order to run OpenPose you must read and accept the
-[OpenPose License](https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/LICENSE).
-OpenPose is free for non-commercial use only; see the
-[OpenPose README](https://github.com/CMU-Perceptual-Computing-Lab/openpose#license)
-for further details.
 
 ## Running the CoLab script
 Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in CoLab'.
@@ -216,4 +206,15 @@ which in table form looks like:
 ## Other details
 The files with suffix like '_3d' and '_adaptive' correspond to the process of specific pose data.
 The folder 'utils' includes some useful tools to process the data. Please find more details from 'utils/README.md'.§
+
+
+## License
+
+The code in this repository is licensed under the [MIT License](LICENSE).
+
+Note that in order to run OpenPose you must read and accept the
+[OpenPose License](https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/LICENSE).
+OpenPose is free for non-commercial use only; see the
+[OpenPose README](https://github.com/CMU-Perceptual-Computing-Lab/openpose#license)
+for further details.
 
