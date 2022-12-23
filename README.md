@@ -2,10 +2,7 @@
 
 ![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_1.gif?raw=true)
 
-A raga performance is a traditional form of Indian classical music that involves the improvisation of melodies and rhythms within a specific framework. Each performer's movements are unique, and the subtle differences in their techniques and styles can have a significant impact on the overall performance.
-
-Using computer vision techniques, it is now possible to create an objective method for analyzing these differences between performers. This code generates tabular data and a skeleton overlay onto a musical performance, to gain insights into the specific techniques and movements used by each performer. It is a library and CoLab script to facilitate running [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) and
-post-processing the results.
+A raga performance is a traditional form of Indian classical music that involves the improvisation of melodies and rhythms within a specific framework. By using computer vision techniques, it is possible to objectively analyze the differences in techniques and styles between performers, and to gain insights into the specific movements and techniques used by each performer. This project with The University of Durham's music department and [EnTimeMent](https://entimement.dibris.unige.it), which uses a novel neuro-cognitive approach to study human movement and behavior, has developed a code that generates coordinate data and a skeleton overlay of a musical performance. This code, which is available as a library and Colab script, utilizes the [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) tool to facilitate the analysis of the performance. By using this code, researchers and music enthusiasts can better understand and appreciate the art of raga performance.
 
 ![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
 
