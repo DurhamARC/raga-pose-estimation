@@ -27,19 +27,19 @@ A raga performance is a traditional form of Indian classical music that involves
 Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in Colab'.
 
 
-1. Set up
+1. Set up 
 Run the first four cells in the Colab. This will take approximately half an hour to run.
-![A video showing how to run a Colab cell](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/1click.gif?raw=true)
+![A video showing how to run a Colab cell](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/1click.gif?raw=true) 
 
-2. Input Parameters
+2. Input Parameters 
 Once the first cells have run you will see this form:
-![A picture showing the layout of the parameters form](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/params.png?raw=true)
+![A picture showing the layout of the parameters form](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/params.png?raw=true) 
 
-The inputs required depend on what type of files you are using.
+The inputs required depend on what type of files you are using. 
 
-2a. With a Video
+2a. With a Video 
 
-Input a video URL
+Input a video URL 
 ![How to put in a video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/2video_url.gif?raw=true)
 
 
