@@ -58,19 +58,46 @@ Type their names with commas inbetween<br />
 If a video is inputted you can create a model video (just showing the OpenPose skellington), the model video over the input video and if you want the output CSVs <br />
 ![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/6output.gif?raw=true)<br />
 
-## 2b. With a JSON OpenPose Output<br />
+### 2b. With a JSON OpenPose Output<br />
 Input the url where the JSON folder previously run through OpenPose<br />
 ![A picture showing where to input json URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-json.png?raw=true)<br />
 
-## 2c. With a Multiple JSON Outputs<br />
-Input a folder containing folders in the same structure as [example_files](https://github.com/DurhamARC/raga-pose-estimation/tree/jo-branch/example_files) with videos if output videos desired.
+### 2c. With a Multiple JSON Outputs<br />
+Input a folder containing folders in the same structure as [example_files](https://github.com/DurhamARC/raga-pose-estimation/tree/jo-branch/example_files) with videos if output videos desired.<br />
 ![A picture showing where to input batch files folder URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-batch.png?raw=true)<br />
 
+## 3. Choose Confidence Threshold<br />
+Choose the level of confidence OpenPose should have in detecting a bodypart. A value of 0.0 means no confidence is required, while a value of 1.0 indicates a high level of confidence.<br />
+![A picture showing how to put in confidence](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/confidence.png?raw=true)<br />
 
-3. Save Output
-Files can be saved by switching to the files tab on the left-hand menu and looking for the output folder. Right-click to save.
-<show switch to files>
-<show clicking to save>
+## 4. Choose Smoothing Parameter<br />
+To reduce jitter in the model, a smoothing function can be applied. You can choose the smoothing window, which determines the number of previous frames used in the smoothing calculation, and the smoothing polynomial order, which is the order of the polynomial used in the fitting function.<br />
+
+![A video showing how to use the smoothing parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/7smoothing.gif?raw=true)<br />
+
+## 5. Choose the Body Parts<br />
+OpenPose is able to detect various body parts. You can select which body parts to detect by choosing from options such as all body parts, upper body parts only, lower body parts only, or specific body parts.<br />
+![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/bodyparts.png?raw=true)<br />
+
+## 6. Choose CSV Format<br />
+Select whether you want the CSV data in the output to be flattened.<br />
+![A picture showing the box to select for CSV flattening](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/csvflattening.png?raw=true)<br />
+
+## 7. Choose Name of Trial<br />
+Enter a name for the trial, which will be included in the file names.<br />
+![A picture showing the box to select for CSV flattening](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/trial.png?raw=true)<br />
+
+## 8. Click Generate Parameters<br />
+![A video showing how to generate parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/8generate.gif?raw=true)<br />
+
+## 9. Run Next Cell<br />
+This cell will execute the openpose/post-processing process using the specified parameters. The duration of the process will depend on the size of the video and may take anywhere from 5 minutes to several hours to complete.<br />
+![A picture showing the cell to run the processing](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/run.png?raw=true)<br />
+
+## 10. Save Output
+To save the output files, switch to the 'Files' tab in the left-hand menu, locate the output folder, and right-click to save it.
+![A video showing how to find the files](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/10findfiles.gif?raw=true)<br />
+![A video showing how to save the videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/11savefiles.gif?raw=true)<br />
 
 ## Installation of raga_pose_estimation Python library
 Install dependencies of `raga_pose_estimation` using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
