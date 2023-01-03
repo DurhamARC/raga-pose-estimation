@@ -37,10 +37,12 @@ Once the first cells have run you will see this form:<br />
 
 The inputs required depend on what type of files you are using. <br />
 
+### Note: files can be uploaded to Google Drive and accessed through the files tab
+
 ### 2a. With a Video <br />
 
 #### Input a video URL <br />
-![How to put in a video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/2video_url.gif?raw=true)<br />
+![A picture showing where to input video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-video.png?raw=true)<br />
 
 #### OPTIONAL: Choose the cropping parameters<br />
 ![A video showing the input of the cropping parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/3crop.gif?raw=true)<br />
@@ -50,15 +52,20 @@ The inputs required depend on what type of files you are using. <br />
 
 #### Type the names of the performers<br />
 Type their names with commas inbetween<br />
-![A video showing the input of names](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/5names.gif?raw=true)<br />
+<performer names>
 
 #### Choose the video outputs desired<br />
 If a video is inputted you can create a model video (just showing the OpenPose skellington), the model video over the input video and if you want the output CSVs <br />
 ![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/6output.gif?raw=true)<br />
 
-# 2b. With a JSON OpenPose Output
+## 2b. With a JSON OpenPose Output<br />
+Input the url where the JSON folder previously run through OpenPose<br />
+![A picture showing where to input json URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-json.png?raw=true)<br />
 
-# 2c. With a Multiple JSON Outputs
+## 2c. With a Multiple JSON Outputs<br />
+Input a folder containing folders in the same structure as [example_files](https://github.com/DurhamARC/raga-pose-estimation/tree/jo-branch/example_files) with videos if output videos desired.
+![A picture showing where to input batch files folder URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-batch.png?raw=true)<br />
+
 
 3. Save Output
 Files can be saved by switching to the files tab on the left-hand menu and looking for the output folder. Right-click to save.
