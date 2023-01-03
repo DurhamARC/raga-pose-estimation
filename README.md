@@ -27,17 +27,17 @@ A raga performance is a traditional form of Indian classical music that involves
 Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in Colab'.
 
 
-1. Set up <br />
+##1. Set up <br />
 Run the first four cells in the Colab. This will take approximately half an hour to run.<br />
 ![A video showing how to run a Colab cell](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/1click.gif?raw=true) 
 
-2. Input Parameters <br />
+##2. Input Parameters <br />
 Once the first cells have run you will see this form:<br />
 ![A picture showing the layout of the parameters form](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/params.png?raw=true)<br />
 
 The inputs required depend on what type of files you are using. <br />
 
-2a. With a Video <br />
+#2a. With a Video <br />
 
 Input a video URL <br />
 ![How to put in a video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/2video_url.gif?raw=true)<br />
@@ -55,9 +55,9 @@ Choose the video outputs desired<br />
 If a video is inputted you can create a model video (just showing the OpenPose skellington), the model video over the input video and if you want the output CSVs <br />
 ![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/6output.gif?raw=true)<br />
 
-2b. With a JSON OpenPose Output
+#2b. With a JSON OpenPose Output
 
-2c. With a Multiple JSON Outputs
+#2c. With a Multiple JSON Outputs
 
 3. Save Output
 Files can be saved by switching to the files tab on the left-hand menu and looking for the output folder. Right-click to save.
