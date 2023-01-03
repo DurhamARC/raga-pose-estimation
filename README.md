@@ -17,21 +17,40 @@
 
 ## Introduction
 
-![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_1.gif?raw=true)
+![Video of a performer singing a Raga](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_1.gif?raw=true)
 
 A raga performance is a traditional form of Indian classical music that involves the improvisation of melodies and rhythms within a specific framework. By using computer vision techniques, it is possible to objectively analyze the differences in techniques and styles between performers, and to gain insights into the specific movements and techniques used by each performer. This project with The University of Durham's music department and [EnTimeMent](https://entimement.dibris.unige.it), which uses a novel neuro-cognitive approach to study human movement and behavior, has developed a code that generates coordinate data and a skeleton overlay of a musical performance. This code, which is available as a library and Colab script, utilizes the [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) tool to facilitate the analysis of the performance. By using this code, researchers and music enthusiasts can better understand and appreciate the art of raga performance.
 
-![alt text](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
+![Video of three performers](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
 
 ## Running the Google Colab script
 Open [RagaPoseEstimationColab.ipynb](RagaPoseEstimationColab.ipynb) and click 'Run in Colab'.
 
-Explain:
-- First three cells for set up
-- Then picture or GIF of the parameter set up
-- Explain how to drag and drop videos or to connect Google Drive
-- Run through
-- How to save files for later use
+
+1. Set up
+Run the first four cells in the Colab. This will take approximately half an hour to run.
+![A video showing how to run a Colab cell](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/1click.gif?raw=true)
+
+2. Input Parameters
+Once the first cells have run you will see this form:
+![A picture showing the layout of the parameters form](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/params.png?raw=true)
+
+The inputs required depend on what type of files you are using.
+
+2a. With a Video
+
+Input a video URL
+![How to put in a video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/2video_url.gif?raw=true)
+
+
+2b. With a JSON OpenPose Output
+
+2c. With a Multiple JSON Outputs
+
+3. Save Output
+Files can be saved by switching to the files tab on the left-hand menu and looking for the output folder. Right-click to save.
+<show switch to files>
+<show clicking to save>
 
 ## Installation of raga_pose_estimation Python library
 Install dependencies of `raga_pose_estimation` using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
