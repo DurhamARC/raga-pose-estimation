@@ -37,7 +37,7 @@ Once the first cells have run you will see this form:<br />
 
 The inputs required depend on what type of files you are using. <br />
 
-# 2a. With a Video <br />
+### 2a. With a Video <br />
 
 Input a video URL <br />
 ![How to put in a video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/2video_url.gif?raw=true)<br />
