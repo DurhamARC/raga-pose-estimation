@@ -96,7 +96,7 @@ This cell will execute the openpose/post-processing process using the specified 
 
 ## 10. Save Output
 To save the output files, switch to the 'Files' tab in the left-hand menu, locate the output folder, and right-click to save it.
-![A video showing how to find the files](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/10findfiles.gif?raw=true)<br />
+![A video showing how to find the files](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/10findfile.gif?raw=true)<br />
 ![A video showing how to save the videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/11savefiles.gif?raw=true)<br />
 
 ## Installation of raga_pose_estimation Python library
