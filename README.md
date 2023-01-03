@@ -39,19 +39,20 @@ The inputs required depend on what type of files you are using. <br />
 
 ### 2a. With a Video <br />
 
-Input a video URL <br />
+#### Input a video URL <br />
 ![How to put in a video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/2video_url.gif?raw=true)<br />
 
-OPTIONAL: Choose the cropping parameters<br />
+#### OPTIONAL: Choose the cropping parameters<br />
 ![A video showing the input of the cropping parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/3crop.gif?raw=true)<br />
 
-Choose the number of people in the video<br />
+#### Choose the number of people in the video<br />
 ![A video showing the sliding number of people parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/4numberpeople.gif?raw=true)<br />
 
-Type the names of the performers with commas between them<br />
+#### Type the names of the performers<br />
+Type their names with commas inbetween<br />
 ![A video showing the input of names](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/5names.gif?raw=true)<br />
 
-Choose the video outputs desired<br />
+#### Choose the video outputs desired<br />
 If a video is inputted you can create a model video (just showing the OpenPose skellington), the model video over the input video and if you want the output CSVs <br />
 ![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/6output.gif?raw=true)<br />
 
