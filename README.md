@@ -19,7 +19,16 @@
 
 ![Video of a performer singing a Raga](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_1.gif?raw=true)
 
-A raga performance is a traditional form of Indian classical music that involves the improvisation of melodies and rhythms within a specific framework. By using computer vision techniques, it is possible to objectively analyze the differences in techniques and styles between performers, and to gain insights into the specific movements and techniques used by each performer. This project with The University of Durham's music department and [EnTimeMent](https://entimement.dibris.unige.it), which uses a novel neuro-cognitive approach to study human movement and behavior, has developed a code that generates coordinate data and a skeleton overlay of a musical performance. This code, which is available as a library and Colab script, utilizes the [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) tool to facilitate the analysis of the performance. By using this code, researchers and music enthusiasts can better understand and appreciate the art of raga performance.
+Raga Pose Estimation comprises a set of tools to facilitate the use of pose estimation software for the analysis of human movement in music performance. It was developed with the study of Indian classical music in mind – hence the name – but can be applied to any other type of small musical ensemble. Raga Pose Estimation was developed by staff in the Music Department and Advanced Research Computing at Durham University, as part of the EU Horizon 2020 FET project EnTimeMent – Entrainment & synchronization at multiple TIME scales in the MENTal foundations of expressive gesture. 
+
+ 
+
+The code, which is available as a library and Colab script, utilizes the [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) tool to facilitate the analysis of musical performance. The Colab script does this by enabling the user to carry out pose estimation online, avoiding the need for a suitable local GPU. Post-processing functions turn the large numbers of JSON files (one per video frame) output by OpenPose into single CSV files per performer. Cropping and trimming of videos, applying confidence levels and smoothing functions to the output, are amongst the other functions that are built into a single process. 
+
+We include some [example_files](https://github.com/DurhamARC/raga-pose-estimation/tree/jo-branch/example_files) to use with the system. Other suitable video examples can be found on Open Science Framework, see for example [North Indian Raga Performance](https://osf.io/nkjgz/). OpenPose proves effective for the extraction of movement information from static videos of music performance, although its performance can suffer in cases of poor lighting, occlusion (body parts are obscured by other objects), when limbs of different individuals overlap, or when tracked body parts leave the video frame altogether. The system is not dependent on any particular video resolution, aspect ratio or frame rate. 
+
+This Readme describes how to use the scripts, whether on Colab or by installing the library locally. Even if you use the Colab script, the text below on use of the library may come in useful as it contains some more detailed information about the functions.  
+
 
 ![Video of three performers](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/example_overlay_3.gif?raw=true)
 
@@ -37,14 +46,18 @@ Once the first cells have run you will see this form:<br />
 
 The inputs required depend on what type of files you are using. <br />
 
-### Note: files can be uploaded to Google Drive and accessed through the files tab
+### Note: files can be uploaded and downloaded to Google Drive and accessed through the files tab
 
 ### 2a. With a Video <br />
+
+### Additional OpenPose Arguements
+There are additional arguments you can pass to OpenPose. See the [OpenPose documentation](https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/include/openpose/flags.hpp) for a full list of options. 
 
 #### Input a video URL <br />
 ![A picture showing where to input video URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-video.png?raw=true)<br />
 
 #### OPTIONAL: Choose the cropping parameters<br />
+(Performance of OpenPose can sometimes be improved by cropping a video to include only the person or persons of interest. Cropping can be carried out as part of the Colab script by entering the parameters here.) 
 ![A video showing the input of the cropping parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/3crop.gif?raw=true)<br />
 
 #### Choose the number of people in the video<br />
@@ -55,11 +68,12 @@ Type their names with commas inbetween<br />
 <performer names>
 
 #### Choose the video outputs desired<br />
-If a video is inputted you can create a model video (just showing the OpenPose skellington), the model video over the input video and if you want the output CSVs <br />
+You can create a model video (just showing the OpenPose skeleton), and/or an overlay video (the skeleton from the model video added to the input video). We recommend writing the output directly to a Google Drive folder: if you choose not to do this, you can click the ‘Download results’ box here. <br />
 ![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/6output.gif?raw=true)<br />
 
 ### 2b. With a JSON OpenPose Output<br />
-Input the url where the JSON folder previously run through OpenPose<br />
+If you have already run the system and want to re-run the post-processing with different parameters, you can start with the JSON folder  
+from the previous run. Input its url or path here. <br />
 ![A picture showing where to input json URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-json.png?raw=true)<br />
 
 ### 2c. With a Multiple JSON Outputs<br />
@@ -67,20 +81,20 @@ Input a folder containing folders in the same structure as [example_files](https
 ![A picture showing where to input batch files folder URL](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/input-batch.png?raw=true)<br />
 
 ## 3. Choose Confidence Threshold<br />
-Choose the level of confidence OpenPose should have in detecting a bodypart. A value of 0.0 means no confidence is required, while a value of 1.0 indicates a high level of confidence.<br />
+OpenPose outputs a confidence level for each estimate of the x- and y- position of a body part. It may sometimes be useful to set a confidence threshold to eliminate some poorly estimated data (which can then be interpolated). Trial and error is necessary to establich a suitable confidence level. (Set to 0 by default.)<br />
 ![A picture showing how to put in confidence](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/confidence.png?raw=true)<br />
 
 ## 4. Choose Smoothing Parameter<br />
-To reduce jitter in the model, a smoothing function can be applied. You can choose the smoothing window, which determines the number of previous frames used in the smoothing calculation, and the smoothing polynomial order, which is the order of the polynomial used in the fitting function.<br />
+To reduce jitter in the model, a smoothing function (Savitzky-Golay filter) can be applied. You can choose the Smoothing window, which determines the number of previous frames used in the smoothing calculation, and the Smoothing polynomial order, which is the order of the polynomial used in the fitting function. The smoother is set to off by default. <br />
 
 ![A video showing how to use the smoothing parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/7smoothing.gif?raw=true)<br />
 
 ## 5. Choose the Body Parts<br />
-OpenPose is able to detect various body parts. You can select which body parts to detect by choosing from options such as all body parts, upper body parts only, lower body parts only, or specific body parts.<br />
+You can select which body parts to detect by choosing from options such as all body parts, upper body parts only (which is best for Indian classical music), lower body parts only, or choose specific body parts.<br />
 ![A video showing how to choose the output videos](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/bodyparts.png?raw=true)<br />
 
 ## 6. Choose CSV Format<br />
-Select whether you want the CSV data in the output to be flattened.<br />
+Select whether you want the CSV data in the output to be flattened (a flattened CSV file includes only one header row, while the unflattened file includes two header rows).<br />
 ![A picture showing the box to select for CSV flattening](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/csvflattening.png?raw=true)<br />
 
 ## 7. Choose Name of Trial<br />
@@ -91,15 +105,29 @@ Enter a name for the trial, which will be included in the file names.<br />
 ![A video showing how to generate parameters](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/8generate.gif?raw=true)<br />
 
 ## 9. Run Next Cell<br />
-This cell will execute the openpose/post-processing process using the specified parameters. The duration of the process will depend on the size of the video and may take anywhere from 5 minutes to several hours to complete.<br />
+This cell will execute the OpenPose/post-processing process using the specified parameters. The duration of the process will depend on the size of the video and may take anywhere from 5 minutes to several hours to complete.<br />
 ![A picture showing the cell to run the processing](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/run.png?raw=true)<br />
 
-## 10. Save Output
-To save the output files, switch to the 'Files' tab in the left-hand menu, locate the output folder, and right-click to save it. <br />
-![A video showing how to find and save the files](https://github.com/durhamarc/raga-pose-estimation/blob/jo-branch/read_me_images/10find.gif?raw=true)<br />
-
-
 ## Installation of raga_pose_estimation Python library
+
+### Requirements
+
+  - pandas=1.3.5  
+  - numpy
+  - scipy
+  - python=3.7
+  - opencv
+  - click
+  - pytest
+  - pytest-cov
+  - coverage[toml]
+  - black
+  - pre-commit
+  - ffmpeg-python
+  - pymediainfo=6.0.1
+
+### How to install dependencies
+
 Install dependencies of `raga_pose_estimation` using [conda](https://docs.conda.io/projects/conda/en/latest/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html):
 
 ```
