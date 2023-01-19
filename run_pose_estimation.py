@@ -1,5 +1,5 @@
 import os
-
+import glob
 import click
 import cv2
 
@@ -13,6 +13,7 @@ from raga_pose_estimation.reshaper import reshape_dataframes
 from raga_pose_estimation.smoother import Smoother
 from raga_pose_estimation.video_utils import crop_video
 from raga_pose_estimation.visualizer import Visualizer
+from raga_pose_estimation.audio_combiner import Audio
 
 
 @click.command()
@@ -27,6 +28,12 @@ from raga_pose_estimation.visualizer import Visualizer
     "--input-json",
     default=None,
     help="Path to a directory of previously generated openpose json files",
+)
+@click.option(
+    "-bf",
+    "--batch-folder",
+    default=None,
+    help="Path to a directory of folders for batch processing",
 )
 @click.option(
     "-o",
@@ -139,12 +146,30 @@ from raga_pose_estimation.visualizer import Visualizer
     default=False,
     help="Export CSV in flattened format, i.e. with a single header row (see README)",
 )
+
+@click.option(
+    "-tn",
+    "--trial_name",
+    type=str,
+    default=None,
+    help="Trial name for this run",
+)
+
+@click.option(
+    "-p",
+    "--performer_names",
+    default=range(1,10),
+    help="Performer's names from left to right",
+    multiple=True
+)
+
 def openpose_cli(
     output_dir,
     openpose_dir,
     openpose_args,
     input_video,
     input_json,
+    batch_folder,
     crop_rectangle,
     number_of_people,
     create_model_video,
@@ -156,6 +181,8 @@ def openpose_cli(
     body_parts,
     bodypartsgroup,
     flatten,
+    trial_name,
+    performer_names
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV
     files. See cli docs for parameter details."""
@@ -176,23 +203,43 @@ def openpose_cli(
     if smoothing_parameters == (None, None):
         smoothing_parameters = None
 
-    run_pose_estimation(
-        output_dir,
-        openpose_dir,
-        openpose_args,
-        input_video,
-        input_json,
-        crop_rectangle,
-        number_of_people,
-        create_model_video,
-        create_overlay_video,
-        width,
-        height,
-        confidence_threshold,
-        smoothing_parameters,
-        body_parts_list,
-        flatten,
-    )
+    if batch_folder != None:
+        multiple_videos(output_dir,
+            openpose_dir,
+            openpose_args,
+            batch_folder,
+            crop_rectangle,
+            number_of_people,
+            create_model_video,
+            create_overlay_video,
+            width,
+            height,
+            confidence_threshold,
+            smoothing_parameters,
+            body_parts_list,
+            flatten,
+            performer_names)
+    else:
+        run_pose_estimation(
+                output_dir,
+                openpose_dir,
+                openpose_args,
+                input_video,
+                input_json,
+                crop_rectangle,
+                number_of_people,
+                create_model_video,
+                create_overlay_video,
+                width,
+                height,
+                confidence_threshold,
+                smoothing_parameters,
+                body_parts_list,
+                flatten,
+                trial_name,
+                performer_names
+            )
+
 
 
 def run_pose_estimation(
@@ -211,6 +258,8 @@ def run_pose_estimation(
     smoothing_parameters=None,
     body_parts=None,
     flatten=False,
+    trial_name=None,
+    performer_names=None
 ):
     """Runs openpose on the video, does post-processing, and outputs CSV files.
     Non-click version to work from jupyter notebooks.
@@ -267,6 +316,7 @@ def run_pose_estimation(
         single header row (see README).
     """
     # Check output directory
+    output_dir = output_dir + "_" + str(trial_name)
     output_dir = os.path.abspath(output_dir)
     if os.path.isdir(output_dir) and os.listdir(output_dir):
         print(
@@ -290,7 +340,7 @@ def run_pose_estimation(
         print("You must provide an input video in order to crop the video.")
         exit(1)
 
-    if input_video is None and create_overlay_video:
+    if input_video is None and create_overlay_video and batch_folder != None:
         print(
             "You must provide an input video in order to create an overlay "
             "video."
@@ -406,14 +456,19 @@ def run_pose_estimation(
         )
         body_keypoints_df.reset_index()
         body_keypoints_dfs.append(body_keypoints_df)
-        previous_body_keypoints_df = body_keypoints_df
+
+        
+        people_found = int(body_keypoints_df.shape[1]/3)
+        if number_of_people == people_found:
+
+            previous_body_keypoints_df = body_keypoints_df
 
     person_dfs = reshape_dataframes(body_keypoints_dfs)
 
     if smoothing_parameters:
         print("Smoothing output...")
         smoother = Smoother(*smoothing_parameters)
-        person_dfs = smoother.smooth(person_dfs)
+        smoothed_person_dfs = smoother.smooth(person_dfs)
 
     if create_model_video or create_overlay_video:
         if not width or not height:
@@ -423,12 +478,14 @@ def run_pose_estimation(
             cap.release()
 
         visualizer = Visualizer(output_directory=output_dir)
+        audio = Audio(input_video_path = input_video, output_directory=output_dir)
 
         if create_model_video:
             print("Creating model video...")
             visualizer.create_video_from_dataframes(
-                "video", person_dfs, width, height
+                "video", person_dfs, width, height, input_video_path=input_video
             )
+            
 
         if create_overlay_video:
             print("Creating overlay video...")
@@ -437,14 +494,87 @@ def run_pose_estimation(
                 person_dfs,
                 width,
                 height,
+                input_video_path=input_video,
                 create_overlay=create_overlay_video,
                 video_to_overlay=input_video,
             )
 
+            print("Adding audio...")
+            audio.audio_combiner(input_video_path=input_video, output_directory = output_dir)
+
     print(f"Saving CSVs to {output_dir}...")
-    write_csv(person_dfs, output_dir, flatten=flatten)
+    write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = False)
+    if smoothed_person_dfs:
+        write_csv(smoothed_person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = True)
     print("Done.")
 
+def multiple_videos(output_dir,
+                openpose_dir,
+                openpose_args,
+                batch_folder,
+                crop_rectangle,
+                number_of_people,
+                create_model_video,
+                create_overlay_video,
+                width,
+                height,
+                confidence_threshold,
+                smoothing_parameters,
+                body_parts_list,
+                flatten,
+                performer_names):
+    contents = os.listdir(batch_folder)
+    # If single run
+    if not any(".json" in file for file in contents):
+        contents = [x for x in contents if not x.startswith('.')]
+        for input_folder in contents:
+            multi_input_json = batch_folder + input_folder + "/output_json/"
+            multi_trial_name = input_folder
+            multi_output_dir = multi_name(output_dir,
+                confidence_threshold,
+                smoothing_parameters)
+            multi_input_video = find_input_video(batch_folder, input_folder)
+
+            run_pose_estimation(
+                multi_output_dir,
+                openpose_dir,
+                openpose_args,
+                multi_input_video,
+                multi_input_json,
+                crop_rectangle,
+                number_of_people,
+                create_model_video,
+                create_overlay_video,
+                width,
+                height,
+                confidence_threshold,
+                smoothing_parameters,
+                body_parts_list,
+                flatten,
+                multi_trial_name,
+                performer_names
+            )
+
+def multi_name(output_dir,
+                confidence_threshold,
+                smoothing_parameters):
+    con = str(confidence_threshold)[0:3]
+    smo = str(smoothing_parameters)[1:-1].replace(', ', '_')
+    return f'{output_dir}_c{con}_s{smo}'
+
+def find_input_video(batch_folder, input_folder):
+    print(batch_folder)
+    video_path = batch_folder + input_folder + '/*.mp4'
+    mp4_files = glob.glob(video_path)
+    print(mp4_files)
+    if len(mp4_files) == 0:
+        return None 
+    if len(mp4_files) == 1:
+        print("Input video found.")
+        return mp4_files[0]
+    else:
+        print("Too many video files in folder.")
+        return None 
 
 if __name__ == "__main__":
     openpose_cli()

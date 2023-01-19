@@ -3,6 +3,11 @@ import cv2
 import numpy as np
 from .openpose_parts import OpenPoseParts
 
+def what_fps(input_video_path):
+    cap = cv2.VideoCapture(input_video_path)
+    fps = cap.get(5)
+    return fps
+
 
 class Visualizer:
     """Class providing visualization of OpenPose data from a DataFrame"""
@@ -166,8 +171,9 @@ class Visualizer:
         person_dfs,
         width,
         height,
+        input_video_path,
         create_overlay=False,
-        video_to_overlay=None,
+        video_to_overlay=None
     ):
         """Creates a video visualising the provided array of body keypoints.
         The lines to draw will be determined by the parts in the first
@@ -216,7 +222,10 @@ class Visualizer:
         filename = os.path.join(
             self.output_directory, "%s_%s.mp4" % (file_basename, name)
         )
-        out = cv2.VideoWriter(filename, fourcc, 25, (width, height))
+
+        fps = what_fps(input_video_path)
+
+        out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
         # Draw the data from the DataFrame
         for i in range(len(person_dfs[0].index)):
