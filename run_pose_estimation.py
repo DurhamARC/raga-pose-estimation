@@ -504,6 +504,7 @@ def run_pose_estimation(
 
     print(f"Saving CSVs to {output_dir}...")
     write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = False)
+    write_csv(person_dfs, "./", trial_name, performer_names, flatten=flatten, smoothed = False)
     if smoothed_person_dfs:
         write_csv(smoothed_person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = True)
     print("Done.")
