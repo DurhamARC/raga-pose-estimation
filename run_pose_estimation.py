@@ -317,7 +317,7 @@ def run_pose_estimation(
         single header row (see README).
     """
     # Check output directory
-    output_dir = output_dir + "_" + str(trial_name)
+    output_dir = output_dir + str(trial_name)
     output_dir = os.path.abspath(output_dir)
     if os.path.isdir(output_dir) and os.listdir(output_dir):
         print(
