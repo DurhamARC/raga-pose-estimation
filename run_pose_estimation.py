@@ -2,6 +2,7 @@ import os
 import glob
 import click
 import cv2
+from sys import exit
 
 from raga_pose_estimation.csv_writer import write_csv
 from raga_pose_estimation.openpose_json_parser import OpenPoseJsonParser
