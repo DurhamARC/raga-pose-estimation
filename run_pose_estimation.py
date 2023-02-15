@@ -501,7 +501,10 @@ def run_pose_estimation(
             )
 
             print("Adding audio...")
-            audio.audio_combiner(input_video_path=input_video, output_directory = output_dir)
+            try:
+                audio.audio_combiner(input_video_path=input_video, output_directory = output_dir)
+            except Exception:
+                pass
 
     print(f"Saving CSVs to {output_dir}...")
     write_csv(person_dfs, output_dir, trial_name, performer_names, flatten=flatten, smoothed = False)
