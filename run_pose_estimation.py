@@ -432,38 +432,38 @@ def run_pose_estimation(
         if pos_json.endswith(".json")
     ]
 
-    if len(json_files) == 0:
-        print(f"No json files found in {path_to_json}.")
+    if len(json_files) != 0:
+        print(f"JSON folder in {path_to_json}.")
 
-    # Get array for dataframes
-    body_keypoints_dfs = []
+        # Get array for dataframes
+        body_keypoints_dfs = []
 
-    # Loop through all json files in output directory
-    # Each file is a frame in the video
-    json_files.sort()
-    previous_body_keypoints_df = None
+        # Loop through all json files in output directory
+        # Each file is a frame in the video
+        json_files.sort()
+        previous_body_keypoints_df = None
 
-    for file in json_files:
-        parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
-        body_keypoints_df = parser.get_multiple_keypoints(
-            list(range(number_of_people)),
-            body_parts,
-            confidence_threshold,
-            previous_body_keypoints_df,
-        )
-        body_keypoints_df = parser.sort_persons_by_x_position(
-            body_keypoints_df
-        )
-        body_keypoints_df.reset_index()
-        body_keypoints_dfs.append(body_keypoints_df)
+        for file in json_files:
+            parser = OpenPoseJsonParser(os.path.join(path_to_json, file))
+            body_keypoints_df = parser.get_multiple_keypoints(
+                list(range(number_of_people)),
+                body_parts,
+                confidence_threshold,
+                previous_body_keypoints_df,
+            )
+            body_keypoints_df = parser.sort_persons_by_x_position(
+                body_keypoints_df
+            )
+            body_keypoints_df.reset_index()
+            body_keypoints_dfs.append(body_keypoints_df)
 
-        
-        people_found = int(body_keypoints_df.shape[1]/3)
-        if number_of_people == people_found:
+            
+            people_found = int(body_keypoints_df.shape[1]/3)
+            if number_of_people == people_found:
 
-            previous_body_keypoints_df = body_keypoints_df
+                previous_body_keypoints_df = body_keypoints_df
 
-    person_dfs = reshape_dataframes(body_keypoints_dfs)
+        person_dfs = reshape_dataframes(body_keypoints_dfs)
 
     if smoothing_parameters:
         print("Smoothing output...")
