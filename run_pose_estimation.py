@@ -434,7 +434,6 @@ def run_pose_estimation(
 
     if len(json_files) == 0:
         print(f"No json files found in {path_to_json}.")
-        exit(1)
 
     # Get array for dataframes
     body_keypoints_dfs = []
